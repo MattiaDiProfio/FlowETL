@@ -1,0 +1,42 @@
+[
+    {
+        "source": "Innsbruck",
+        "destination": "London",
+        "source_latitude": 47.2602,
+        "source_longitude": 11.344,
+        "destination_latitude": 51.1481,
+        "destination_longitude": -0.1903,
+        "source_airport_code": "INN",
+        "destination_airport_code": "LGW"
+    },
+    {
+        "source": "Innsbruck",
+        "destination": "Amsterdam",
+        "source_latitude": 47.2602,
+        "source_longitude": 11.344,
+        "destination_latitude": 52.3086,
+        "destination_longitude": 4.7639,
+        "source_airport_code": "INN",
+        "destination_airport_code": "AMS"
+    },
+    {
+        "source": "Linz",
+        "destination": "Bari",
+        "source_latitude": 48.2332,
+        "source_longitude": 14.1875,
+        "destination_latitude": 41.1389,
+        "destination_longitude": 16.7606,
+        "source_airport_code": "LNZ",
+        "destination_airport_code": "BRI"
+    },
+    {
+        "source": "Linz",
+        "destination": "Alicante",
+        "source_latitude": 48.2332,
+        "source_longitude": 14.1875,
+        "destination_latitude": 38.2822,
+        "destination_longitude": -0.5582,
+        "source_airport_code": "LNZ",
+        "destination_airport_code": "ALC"
+    }
+]

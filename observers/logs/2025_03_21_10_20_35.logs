@@ -1,0 +1,20 @@
+root INFO - 21/03/2025 10:20:35 AM : Connected to broker
+SourceObserver INFO - 21/03/2025 10:20:35 AM : Observer stopped on folder ..\input\source
+TargetObserver INFO - 21/03/2025 10:20:35 AM : Observer started on folder ..\input\target
+SourceObserver INFO - 21/03/2025 10:21:01 AM : detected file 'example_source.csv'
+root INFO - 21/03/2025 10:21:01 AM : Extraction sample percentage set to 5.0%
+SourceObserver INFO - 21/03/2025 10:21:01 AM : Extracted 0 objects from the uploaded file
+SourceObserver INFO - 21/03/2025 10:21:01 AM : Published the following metrics to Reporter : {'from': 'source_observer', 'contents': {'filename': 'example_source.csv', 'objects_count': 0, 'filesize_mbs': 0.17}}
+kafka.conn INFO - 21/03/2025 10:21:01 AM : <BrokerConnection node_id=1001 host=localhost:9092 <connecting> [IPv6 ('::1', 9092, 0, 0)]>: connecting to localhost:9092 [('::1', 9092, 0, 0) IPv6]
+SourceObserver INFO - 21/03/2025 10:21:01 AM : Published the following information to broker - filename : 'example_source.csv', associatedKey : 'None', contents (hidden) : 0
+kafka.conn INFO - 21/03/2025 10:21:01 AM : <BrokerConnection node_id=1001 host=localhost:9092 <connecting> [IPv6 ('::1', 9092, 0, 0)]>: Connection complete.
+kafka.conn INFO - 21/03/2025 10:21:01 AM : <BrokerConnection node_id=bootstrap-0 host=localhost:9092 <connected> [IPv6 ('::1', 9092, 0, 0)]>: Closing connection. 
+TargetObserver INFO - 21/03/2025 10:21:17 AM : detected file 'example_target.csv'
+root INFO - 21/03/2025 10:21:17 AM : Extraction sample percentage set to 5.0%
+TargetObserver INFO - 21/03/2025 10:21:17 AM : Extracted 3 objects from the uploaded file
+TargetObserver INFO - 21/03/2025 10:21:17 AM : Published the following metrics to Reporter : {'from': 'target_observer', 'contents': {'filename': 'example_target.csv', 'objects_count': 3, 'filesize_mbs': 0.04}}
+TargetObserver INFO - 21/03/2025 10:21:17 AM : Published the following information to broker - filename : 'example_target.csv', contents (hidden) : 3
+SourceObserver INFO - 21/03/2025 10:21:20 AM : Observer stopped
+TargetObserver INFO - 21/03/2025 10:21:20 AM : Observer stopped
+kafka.producer.kafka INFO - 21/03/2025 10:21:20 AM : Closing the Kafka producer with 0 secs timeout.
+kafka.producer.kafka INFO - 21/03/2025 10:21:20 AM : Proceeding to force close the producer since pending requests could not be completed within timeout 0.

@@ -1,0 +1,22 @@
+[
+    {
+        "recipe_id": 11462,
+        "cuisine": "italian",
+        "ingredients_list": "KRAFT Zesty Italian Dressing, purple onion, broccoli florets, rotini, pitted black olives, Kraft Grated Parmesan Cheese, red pepper"
+    },
+    {
+        "recipe_id": 2238,
+        "cuisine": "irish",
+        "ingredients_list": "eggs, citrus fruit, raisins, sourdough starter, flour, hot tea, sugar, ground nutmeg, salt, ground cinnamon, milk, butter"
+    },
+    {
+        "recipe_id": 41882,
+        "cuisine": "chinese",
+        "ingredients_list": "boneless chicken skinless thigh, minced garlic, steamed white rice, baking powder, corn starch, dark soy sauce, kosher salt, peanuts, flour, scallions, Chinese rice vinegar, vodka, fresh ginger, egg whites, broccoli, toasted sesame seeds, sugar, store bought low sodium chicken stock, baking soda, Shaoxing wine, oil"
+    },
+    {
+        "recipe_id": 2362,
+        "cuisine": "mexican",
+        "ingredients_list": "green chile, jalapeno chilies, onions, ground black pepper, salt, chopped cilantro fresh, green bell pepper, garlic, white sugar, roma tomatoes, celery, dried oregano"
+    }
+]

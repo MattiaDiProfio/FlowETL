@@ -1,0 +1,16 @@
+root INFO - 21/03/2025 10:20:38 AM : Connected to broker
+kafka.consumer.subscription_state INFO - 21/03/2025 10:20:38 AM : Updated partition assignment: [TopicPartition(topic='optimalPlans', partition=0)]
+kafka.conn INFO - 21/03/2025 10:20:38 AM : <BrokerConnection node_id=1001 host=localhost:9092 <connecting> [IPv6 ('::1', 9092, 0, 0)]>: connecting to localhost:9092 [('::1', 9092, 0, 0) IPv6]
+kafka.conn INFO - 21/03/2025 10:20:38 AM : <BrokerConnection node_id=1001 host=localhost:9092 <connecting> [IPv6 ('::1', 9092, 0, 0)]>: Connection complete.
+kafka.conn INFO - 21/03/2025 10:20:38 AM : <BrokerConnection node_id=bootstrap-0 host=localhost:9092 <connected> [IPv6 ('::1', 9092, 0, 0)]>: Closing connection. 
+root INFO - 21/03/2025 10:22:11 AM : Received optimal plan -> ['example_source.csv', {'associated_key': None}, {'standardiseFeatures': {'First Name+ Last Name': 'Full Name', ' Age': ' Age', ' Salary': ' Salary', 'CREATE': '', 'DROP': ''}}, {'standardiseValues': 'def transform_table(input_table):\n    output_table = [input_table[0]]\n    \n    # Sample data to add\n    data = [\n        ["John Smith", " 56", " 745300"],\n        ["Emily Johnson", " 42", " 603200"],\n        ["Michael Brown", " 35", " 525500"]\n    ]\n    \n    for row in data:\n        full_name = row[0]\n        age = row[1]\n        salary = row[2]\n        \n        # Transform the name to initial format\n        name_parts = full_name.split()\n        transformed_name = f"{name_parts[0][0]}. {name_parts[1]}"\n        \n        output_table.append([transformed_name, age, salary])\n    \n    return output_table'}]
+root INFO - 21/03/2025 10:22:11 AM : Published the following metrics to Reporter : {'from': 'pre_etl_pipeline', 'contents': {'missing': {'missing_cells_percent': 0.0}, 'duplicates': {'duplicate_rows_percent': 9.091}, 'dq': 0.992}}
+kafka.conn INFO - 21/03/2025 10:22:11 AM : <BrokerConnection node_id=1001 host=localhost:9092 <connecting> [IPv6 ('::1', 9092, 0, 0)]>: connecting to localhost:9092 [('::1', 9092, 0, 0) IPv6]
+root INFO - 21/03/2025 10:22:11 AM : Applied plan to file 'input\source\example_source.csv'
+kafka.conn INFO - 21/03/2025 10:22:11 AM : <BrokerConnection node_id=1001 host=localhost:9092 <connecting> [IPv6 ('::1', 9092, 0, 0)]>: Connection complete.
+root INFO - 21/03/2025 10:22:11 AM : Successfully loaded the transformed file to '\output'
+kafka.conn INFO - 21/03/2025 10:22:11 AM : <BrokerConnection node_id=bootstrap-0 host=localhost:9092 <connected> [IPv6 ('::1', 9092, 0, 0)]>: Closing connection. 
+root INFO - 21/03/2025 10:22:11 AM : Published the following metrics to Reporter : {'from': 'post_etl_pipeline', 'contents': {'missing': {'missing_cells_percent': 0.0}, 'duplicates': {'duplicate_rows_percent': 33.333}, 'dq': 0.963}}
+kafka.producer.kafka INFO - 21/03/2025 10:22:11 AM : Closing the Kafka producer with 4294967.0 secs timeout.
+kafka.conn INFO - 21/03/2025 10:22:11 AM : <BrokerConnection node_id=1001 host=localhost:9092 <connected> [IPv6 ('::1', 9092, 0, 0)]>: Closing connection. 
+kafka.conn INFO - 21/03/2025 10:22:11 AM : <BrokerConnection node_id=1001 host=localhost:9092 <connected> [IPv6 ('::1', 9092, 0, 0)]>: Closing connection. 

@@ -1,0 +1,24 @@
++ -------------------------------------------ETL Report------------------------------------------- +
+| time-elapsed: 106.911325 s                                                                       |
++ ----------------------------------------Source File Info---------------------------------------- +
+| filename: example_source.csv                                                                     |
+| objects-count: 0                                                                                 |
+| filesize: 0.17 MBs                                                                               |
++ ----------------------------------------Target File Info---------------------------------------- +
+| filename: example_target.csv                                                                     |
+| objects-count: 3                                                                                 |
+| filesize: 0.04 MBs                                                                               |
++ --------------------------------------Planning Engine Stats------------------------------------- +
+| plans-computed: 36                                                                               |
+| plans-failed: 12                                                                                 |
+| max-data-quality-score: 0.0                                                                      |
+| best-plan: []                                                                                    |
++ --------------------------------------Pre-ETL Source Stats-------------------------------------- +
+| missing-cells-percent: 0.0 %                                                                     |
+| duplicate-rows-percent: 9.091 %                                                                  |
+| data-quality-score: 0.992                                                                        |
++ --------------------------------------Post-ETL Source Stats------------------------------------- +
+| missing-cells-percent: 0.0 %                                                                     |
+| duplicate-rows-percent: 33.333 %                                                                 |
+| data-quality-score: 0.963                                                                        |
++ ------------------------------------------------------------------------------------------------ +

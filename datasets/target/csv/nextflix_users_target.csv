@@ -1,0 +1,6 @@
+id,first_name,last_name,age,country_name,subscription,watch_time_hours,favourite_genre,last_access
+1,James,Martinez,18,France,Premium,80,Drama,12-May-24
+2,John,Miller,23,USA,Premium,330,Sci-Fi,05-Feb-25
+3,Emma,Davis,60,UK,Basic,40,Comedy,24-Jan-25
+4,Emma,Miller,44,USA,Premium,270,Documentary,25-Mar-24
+5,Jane,Smith,68,USA,Standard,910,Drama,14-Jan-25
