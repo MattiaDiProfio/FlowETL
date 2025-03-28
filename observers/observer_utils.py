@@ -63,7 +63,7 @@ class EventHandler(FileSystemEventHandler):
             # extract a sample of the internal representation
             sampled_IR = extract_sample(internal_representation)
             serialised_IR =  json.dumps(sampled_IR, indent=4)
-            objects_count = len(sampled_IR)-1
+            objects_count = len(internal_representation)-1
 
             # observer metrics
             observer_metrics = {
@@ -164,7 +164,10 @@ def extract_sample(internal_representation, p=0.05):
     sampled_internal_representation.append(headers)
 
     # choose sample of rows
-    sampled_row_indices = random.sample(range(1, len(internal_representation)), int((len(internal_representation)-1) * p))
+
+    cap = 50 # cap the IR sample to 50 entries
+    
+    sampled_row_indices = random.sample(range(1, len(internal_representation)), int( min(cap, (len(internal_representation)-1) * p) ))
     for row_index in sampled_row_indices:
         sampled_internal_representation.append(internal_representation[row_index])
 

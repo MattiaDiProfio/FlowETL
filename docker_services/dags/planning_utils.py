@@ -9,7 +9,7 @@ import numpy as np
 def generate_plans():
     
     # define all possible options for the available transformation nodes
-    missing_value_handlers = ['missingValues/impute', 'missingValues/drop.rows', 'missingValues/drop.columns']
+    missing_value_handlers = ['missingValues/impute', 'missingValues/drop.rows'] # removed for now 'missingValues/drop.columns'
     duplicate_values_handlers = ['duplicates']
     outlier_values_handlers = ['outliers/impute', 'outliers/drop']
 
@@ -125,7 +125,7 @@ def standardise_features(internal_representation, mapping):
 
     for x_attribute, y_attribute in mapping.items():
 
-        source = x_attribute.split("+")
+        source = x_attribute.split(",")
 
         if len(source) == 2:
 
@@ -153,7 +153,7 @@ def standardise_features(internal_representation, mapping):
             if attribute == 'DROP':
                 
                 # extract the column names to be dropped
-                column_names_todrop = y_attribute.split("+")
+                column_names_todrop = y_attribute.split(",")
 
                 if column_names_todrop[0] != '': # this occurs when we try to split an empty string, aka there is nothing to drop
 
@@ -167,7 +167,7 @@ def standardise_features(internal_representation, mapping):
             elif attribute == 'CREATE':
                 
                 # extract the column names to be created
-                column_names_tocreate = y_attribute.split("+")
+                column_names_tocreate = y_attribute.split(",")
 
                 if column_names_tocreate[0] != '': # this occurs when we try to split an empty string, aka there is nothing to create
 
@@ -228,7 +228,7 @@ def gale_shapley(source, target, diff=0.05):
     matched_attributes['DROP'] = []
     rejected_matches = {x: [] for x in X} # record matches which get discarded during execution
 
-    progress = [len(unmatched_x)] # record the progress of the algorithm, used to surpass stalling points
+    iterations_elapsed = 0
 
     while unmatched_x: 
 
@@ -299,9 +299,12 @@ def gale_shapley(source, target, diff=0.05):
                     else: # the challenger is rejected
                         break
 
-        progress.append(len(unmatched_x))
-        if len(progress) > len(X.keys()) and progress[-(len(X.keys())-1)] == len(unmatched_x): # halt the algorithm when a stalling point is reached
-            break
+        iterations_elapsed += 1
+
+        iterations_threshold = max(len(X.keys()), len(Y.keys())) ** 2 # expect the number of iterations to be less than quadratic, if this is exceeded, likely a stalling point is reached
+        if iterations_elapsed > iterations_threshold:
+            print("algorithm halted.")
+            return None
         
     # identify attributes from the Y set which are created
     for attribute in target:
@@ -311,8 +314,14 @@ def gale_shapley(source, target, diff=0.05):
     # swap the mapping order to be x -> y instead of y -> x
     output = {}
     for y, x in matched_attributes.items():
-        if y == 'CREATE' or y == 'DROP': output[y] = x
-        else: output['+'.join(x)] = y
+        if y == 'CREATE' or y == 'DROP': 
+            output[y] = x
+        else: 
+            if x == '':
+                if 'CREATE' in output: output['CREATE'] += f",{y}"
+                else: output['CREATE'] = y
+            else:
+                output[",".join(x)] = y
 
     # identify attributes from the X set which are dropped
     temp = ''.join([ ''.join(entry) for entry in matched_attributes.values() ])
@@ -320,10 +329,11 @@ def gale_shapley(source, target, diff=0.05):
         if attribute not in temp:
             output['DROP'].append(attribute)
 
-    output['DROP'] = '+'.join(output['DROP'])
-    output['CREATE'] = '+'.join(output['CREATE'])
+    output['DROP'] = ",".join(output['DROP'])
+    output['CREATE'] = ",".join(output['CREATE'])
 
     return output
+
 
 def missing_value_handler(internal_representation, schema, strategy):
     headers = internal_representation[0]

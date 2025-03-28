@@ -86,6 +86,9 @@ def compute_schema_map(ti):
     # run gale-shapley to compute a schema map
     schema_map = gale_shapley(source_headers, target_headers)
 
+    if not schema_map:
+        raise AirflowFailException("Schema map step failed due to algorithm timeout")
+    
     # publish schema map to xcoms
     ti.xcom_push(key="schema_map", value=schema_map)
 
@@ -96,7 +99,7 @@ def apply_schema_map(ti):
 
     for x_attribute, y_attribute in mapping.items():
 
-        source = x_attribute.split("+")
+        source = x_attribute.split(",")
 
         if len(source) == 2:
 
@@ -111,8 +114,12 @@ def apply_schema_map(ti):
 
             # join column x2 onto column x1
             for row in internal_representation[1:]:
-                row[x1_indx] = f'__{json.dumps(row[x1_indx])}{json.dumps(row[x2_indx])}__' # NOTE that this is a temporary fix until we figure out value normalisation!
+                data_string = json.dumps(row[x1_indx]) + "|" + json.dumps(row[x2_indx]) # NOTE that this is a temporary fix until we figure out value normalisation!
+                values = data_string.replace('"', '').split('|')
+                row[x1_indx] = f"{values[0]}|{values[1]}"
+
                 
+
             # drop column x2 from the internal representation
             for row in internal_representation:
                 row.pop(x2_indx)
@@ -124,7 +131,7 @@ def apply_schema_map(ti):
             if attribute == 'DROP':
                 
                 # extract the column names to be dropped
-                column_names_todrop = y_attribute.split("+")
+                column_names_todrop = y_attribute.split(",")
 
                 if column_names_todrop[0] != '': # this occurs when we try to split an empty string, aka there is nothing to drop
 
@@ -138,7 +145,7 @@ def apply_schema_map(ti):
             elif attribute == 'CREATE':
                 
                 # extract the column names to be created
-                column_names_tocreate = y_attribute.split("+")
+                column_names_tocreate = y_attribute.split(",")
 
                 if column_names_tocreate[0] != '': # this occurs when we try to split an empty string, aka there is nothing to create
 
@@ -181,18 +188,20 @@ def infer_transformation_logic(ti):
 
     # construct the prompt
     prompt = f"""
-    You are a data engineer. I want you to write a python function which takes in a table, represented by a 2D array in python, and 
-    applies all the necessary steps required to transform the input table into the output one. You should use the columns mapping and the 
-    table schemas provided to inform your decisions. Return only the python code, without justifying your decisions and without adding comments. 
+    Write a python function which takes in a table represented by a 2D list and applies all the necessary steps required to transform the input table into the output one. 
+    
+    Use the columns mapping and the table schemas provided to inform your decisions. 
+    
+    Return only the python code, without justifying your decisions and without adding comments. 
 
     Here is an example to help you understand the task:
 
-    Inputs:
+    Inputs
     Input table = [['first name', 'last_name', 'salary', 'tax'],['John', 'Snow', 45210, 0.25],['Amy', 'Smith', 59440, 0.30] ],
     Output table = [['Name', 'Salary', 'Tax (%)', 'Net Income'],['J. Snow', 45210, 25, 33908],['A. Smith', 59440, 30, 41608] ], 
     Input table schema = {{'first name' : 'string', 'last_name' : 'string', 'salary' : 'number', 'tax' : 'number' }},
     Output table schema = {{'Name' : 'string', 'Salary' : 'number', 'Tax (%)' : 'number', 'Net Income' : 'number'}},
-    Input-Output columns mapping = {{ "'first name'+'last_name'" : "Name", "salary" : "Salary", "tax" : "Tax (%)", "CREATE" : "Net Income", "DROP" : "" }}
+    Input-Output columns mapping = {{ "first name,last_name" : "Name", "salary" : "Salary", "tax" : "Tax (%)", "CREATE" : "Net Income", "DROP" : "" }}
 
     Process:
     Use the Input-Output columns mapping to notice that the 'first name' and 'last_name' columns from the input table are merged into the 'Name' column in the output.
@@ -201,11 +210,8 @@ def infer_transformation_logic(ti):
     and 'DROP'. The 'CREATE' key tells us that 'Net Income' is a new column, and looking at the other columns we see that it is likely populated by taking the product of 'salary' and 'tax'.
 
     Output:
-    The input table will look something like this:
-    [['Name', 'Salary', 'Tax (%)', 'Net Income'],['','','',''],['','','','']]
-
     def transform_table(input_table):
-        output_table = [["Name", "Salary", "Tax (%)", "Net Income"]]
+        output_table = [["Name", "Salary", "Tax (%)", "Net Income"]] # taken from Input-Output columns mapping
         for row in input_table[1:]:
             first_name, last_name, salary, tax = row
             name = f'{{first_name[0]}}. {{last_name}}'
@@ -214,15 +220,40 @@ def infer_transformation_logic(ti):
             output_table.append([name, salary, tax_percent, net_income])
         return output_table
     
-    Your code should leave cells containing the string '_ext_' unchanged.
-    Notice how the method assumes that columns have been re-named already, hence it does not bother with this step. Also notice how the output code 
-    assumes that the input table is empty. Finally, include any required imports within the function. Only return valid python code. 
-    The response will be turned into an executable using the exec() method, so it should be formatted such that no errors occur. The code you return should also generalise to other inputs 
-    following a similar structure as the ones you have already seen.
+    Your code should leave cells with value of '_ext_' unchanged.
 
+    Tip : if a column is populated with values separated by '|', use these values to infer the value for that column
+
+    Notice how the method assumes that columns have been re-named already, hence it does not bother with this step. 
+    
+    Also notice how the output code assumes that the input table is empty. 
+    
+    See if applying mathematical or formatting functions to the values achieves the desired output.
+
+    Include any required imports within the function. 
+    
+    Only return valid python code. 
+
+    The response will be turned into an executable using the exec() method, so it should be formatted such that no errors occur. 
+
+    The code you return should also generalise to other inputs. 
+
+    Do not overfit to the example input table.
+    
     Now operate on the given artifacts:
     Input table = {inputTable}, Output table = {outputTable}, Input table schema = {inputSchema}, Output table schema = {outputSchema}, Input-Output columns mapping = {mapping}
     """
+
+
+    print("\n")
+    print("\n") # i suspect that we need to keep a copy of the original source sample, then provide the 
+                # llm with the source, target, and the source after feature standardisation, which is what we operate on?
+    print(inputTable)
+    print("\n")
+    print(outputTable)
+    print("\n")
+    print("\n")
+
 
     logging.info(f"LLM Prompt : \n{prompt} \n")
 
@@ -238,7 +269,12 @@ def infer_transformation_logic(ti):
         url="https://openrouter.ai/api/v1/chat/completions",
         headers={ "Authorization": f"Bearer {openrouter_key}" },
         data=json.dumps({
-            "system" : "Your task is to create Python functions based on the provided natural language requests. The requests will describe the desired functionality of the function, including the input parameters and expected return value. Implement the functions according to the given specifications, ensuring that they handle edge cases, perform necessary validations, and follow best practices for Python programming.",
+            "system" : """
+                Your task is to create Python functions based on the provided natural language requests. "
+                "The requests will describe the desired functionality of the function, including the input parameters and expected return value. "
+                "Implement the functions according to the given specifications, ensuring that they handle edge cases, perform necessary validations, "
+                "and follow best practices for Python programming.
+            """,
             "model" : "anthropic/claude-3.7-sonnet",
             "messages" : [{ "role": "user", "content": prompt }]
         })
