@@ -4,6 +4,7 @@ import itertools
 from thefuzz import fuzz
 from sentence_transformers import SentenceTransformer
 import logging
+import numpy as np
 
 def generate_plans():
     
@@ -337,7 +338,7 @@ def missing_value_handler(internal_representation, schema, strategy):
 
     elif strategy == 'drop.columns': 
 
-        null_columns_indices = []
+        null_columns_indices = []        
         for column_indx, column_name in enumerate(headers):
 
             # drop all columns which contain more than 50% null values
@@ -371,11 +372,6 @@ def duplicate_values_handler(internal_representation):
             seen.add(key)
     return unique_rows
 
-def compute_median(column):
-    column.sort()
-    median = column[len(column) // 2] if len(column) % 2 != 0 else (column[len(column) // 2 - 1] + column[len(column) // 2]) / 2
-    return median
-
 """
 function outlier_handler
 inputs : the internal representation, a strategy for handling outliers, a schema to lookup the column's type
@@ -383,41 +379,43 @@ output : the internal representation, with outlier values handled according to t
 NOTE that this method requires the missing_value_handler to be invoked first, otherwise null values will break the outlier handling process!
 NOTE that outlier detection is only done on numerical columns. the detection strategy uses z-scores, and imputation is done using the median of the column
 """
+
 def outlier_handler(internal_representation, schema, strategy):
 
-    headers = internal_representation[0]
-    for column_indx, column_name in enumerate(headers):
-        
-        # attempt outlier detection and handling on numerical columns only
-        column_type = schema[column_name]
-        if column_type == 'number':
-            column = [ float(row[column_indx]) for row in internal_representation[1:] ] # store a local copy of the column
-            zscores = compute_zscores(column) # compute the z score for each value in the column
-            median = compute_median(column)
+    processed_representation = [internal_representation[0]] + internal_representation[1:]
+    threshold = 3
 
-            # compute the row indices of all outliers within this column
-            outlier_row_indices = []
-            for i, score in enumerate(zscores):
-                row_offset = len(outlier_row_indices)
-                if abs(score) > 3:
-                    outlier_row_indices.append(i  - row_offset)
+    if strategy not in ['impute', 'drop']:
+        logging.error(f"Strategy '{strategy}' not supported for handling outlier values.")
+        return internal_representation
+    
+    for column_indx, column_name in enumerate(processed_representation[0]):
 
-            # impute outlier values with the median
+        if schema[column_name] == 'number':
+            
+            column = [float(row[column_indx]) for row in processed_representation[1:]]
+
+            median = np.median(column)
+            mad = np.median(np.abs(column - median))
+
+            outlier_mask = np.abs(column - median) > (threshold * mad)
+            outlier_indices = np.where(outlier_mask)[0]
+
             if strategy == 'impute':
-                for row_indx in range(len(internal_representation)):
-                    if row_indx in outlier_row_indices:
-                        internal_representation[row_indx][column_indx] = median
 
-            # drop rows containing outlier values
+                for idx in outlier_indices:
+                    processed_representation[idx + 1][column_indx] = float(median)
+            
             elif strategy == 'drop':
-                for row_indx in outlier_row_indices:
-                    internal_representation.pop(row_indx)
 
-            else:
-                logging.error(f"Strategy '{strategy}' not supported for handling outlier values.")
-                break
+                processed_representation = (
+                    [processed_representation[0]] + 
+                    [row for i, row in enumerate(processed_representation[1:]) 
+                     if i not in outlier_indices]
+                )
 
-    return internal_representation    
+    return processed_representation
+
 
 """
 function compute_dq
@@ -468,7 +466,7 @@ output : a zscore mask of the input array
 def compute_zscores(arr):
     mean = sum(arr) / len(arr)
     std_dev = (sum([(x - mean) ** 2 for x in arr]) / len(arr)) ** 0.5
-    z_scores = [(x - mean) / std_dev for x in arr]
+    z_scores = [round((x - mean) / std_dev, 2) for x in arr]
     return z_scores
 
 """

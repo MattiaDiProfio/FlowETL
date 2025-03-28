@@ -217,7 +217,8 @@ def infer_transformation_logic(ti):
     Your code should leave cells containing the string '_ext_' unchanged.
     Notice how the method assumes that columns have been re-named already, hence it does not bother with this step. Also notice how the output code 
     assumes that the input table is empty. Finally, include any required imports within the function. Only return valid python code. 
-    The response will be turned into an executable using the exec() method, so it should be formatted such that no errors occur. 
+    The response will be turned into an executable using the exec() method, so it should be formatted such that no errors occur. The code you return should also generalise to other inputs 
+    following a similar structure as the ones you have already seen.
 
     Now operate on the given artifacts:
     Input table = {inputTable}, Output table = {outputTable}, Input table schema = {inputSchema}, Output table schema = {outputSchema}, Input-Output columns mapping = {mapping}
@@ -237,6 +238,7 @@ def infer_transformation_logic(ti):
         url="https://openrouter.ai/api/v1/chat/completions",
         headers={ "Authorization": f"Bearer {openrouter_key}" },
         data=json.dumps({
+            "system" : "Your task is to create Python functions based on the provided natural language requests. The requests will describe the desired functionality of the function, including the input parameters and expected return value. Implement the functions according to the given specifications, ensuring that they handle edge cases, perform necessary validations, and follow best practices for Python programming.",
             "model" : "anthropic/claude-3.7-sonnet",
             "messages" : [{ "role": "user", "content": prompt }]
         })
