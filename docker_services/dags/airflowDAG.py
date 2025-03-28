@@ -244,17 +244,6 @@ def infer_transformation_logic(ti):
     Input table = {inputTable}, Output table = {outputTable}, Input table schema = {inputSchema}, Output table schema = {outputSchema}, Input-Output columns mapping = {mapping}
     """
 
-
-    print("\n")
-    print("\n") # i suspect that we need to keep a copy of the original source sample, then provide the 
-                # llm with the source, target, and the source after feature standardisation, which is what we operate on?
-    print(inputTable)
-    print("\n")
-    print(outputTable)
-    print("\n")
-    print("\n")
-
-
     logging.info(f"LLM Prompt : \n{prompt} \n")
 
     def extract_code(text):

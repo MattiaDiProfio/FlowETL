@@ -9,7 +9,7 @@ import numpy as np
 def generate_plans():
     
     # define all possible options for the available transformation nodes
-    missing_value_handlers = ['missingValues/impute', 'missingValues/drop.rows'] # removed for now 'missingValues/drop.columns'
+    missing_value_handlers = ['missingValues/impute', 'missingValues/drop.rows', 'missingValues/drop.columns'] 
     duplicate_values_handlers = ['duplicates']
     outlier_values_handlers = ['outliers/impute', 'outliers/drop']
 
