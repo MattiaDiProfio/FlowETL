@@ -91,10 +91,31 @@ def compute_etl_metrics(internal_representation, schema):
     duplicates_count = abs(row_count - len(seen))
     duplicate_rows_percent = round((duplicates_count / row_count) * 100, 3)
 
+    # compute the total number of numerical values
+    total_numerical_values_count = 0
+    total_numerical_outliers_count = 0
+    for column_indx, column_name in enumerate(headers):
+        if schema[column_name] == 'number': 
+
+            # compute the count of numerical outliers
+            column = [float(row[column_indx]) for row in internal_representation[1:]]
+            median = np.median(column)
+            mad = np.median(np.abs(column - median))
+            threshold = 3
+            outlier_mask = np.abs(column - median) > (threshold * mad)
+            total_numerical_outliers_count = len(np.where(outlier_mask)[0])
+    
+            # compute total numer of numerical values
+            total_numerical_values_count += (len(internal_representation)-1)
+
+    outliers_percent = round((total_numerical_outliers_count / total_numerical_values_count) * 100, 3)
+
+    # compute the dataquality of the IR
     ir_dq = round(compute_dq(internal_representation, schema), 3)
 
     return {
             'missing': {'missing_cells_percent': missing_values_percent},
+            'outliers' : {'numerical_outliers_percent' : outliers_percent},
             'duplicates': {'duplicate_rows_percent' : duplicate_rows_percent},
             'dq': ir_dq
         }
@@ -434,40 +455,34 @@ def compute_dq(internal_representation, schema):
         for cell in row:
             if cell == "" or cell is None: total_null_values += 1
 
-    missing_values_ratio = total_null_values / total_cells
-
     # compute ratio of duplicate rows
     duplicate_rows = row_count - len(set(json.dumps(row) for row in internal_representation))
-    duplicate_rows_ratio = duplicate_rows / total_cells
 
     # compute ratio of outliers across all cells
-    total_outlier_values = 0
+
+    total_numerical_outliers_count = 0
+    total_numerical_values_count = 0
     for column_indx, column_name in enumerate(headers):
         column_type = schema[column_name]
         if column_type == 'number':
-            column = [ float(row[column_indx]) if row[column_indx] else 0 for row in internal_representation[1:] ] # store a local copy of the column
-            zscores = compute_zscores(column) # compute the z score for each value in the column
-            outlier_count = 0
-            for i, score in enumerate(zscores):
-                if abs(score) > 3:
-                    outlier_count += 1
-            total_outlier_values += outlier_count
+            # compute the count of numerical outliers
+            column = [float(row[column_indx]) for row in internal_representation[1:] if row[column_indx] != '' and row[column_indx] is not None]
+            median = np.median(column)
+            mad = np.median(np.abs(column - median))
+            threshold = 3
+            outlier_mask = np.abs(column - median) > (threshold * mad)
+            total_numerical_outliers_count = len(np.where(outlier_mask)[0])
+    
+            # compute total numer of numerical values
+            total_numerical_values_count += (len(internal_representation)-1)
 
-    outlier_values_ratio = total_outlier_values / total_cells
+    missing_values_ratio = total_null_values / total_cells
+    duplicate_rows_ratio = duplicate_rows / total_cells
+    outliers_percent = total_numerical_outliers_count / total_numerical_values_count
 
-    final_dq = 1 - abs((missing_values_ratio + duplicate_rows_ratio + outlier_values_ratio)/3)
+    final_dq = 1 - abs((missing_values_ratio + duplicate_rows_ratio + outliers_percent)/3)
     return final_dq
 
-"""
-function compute_zscores
-input : array - a numerical column
-output : a zscore mask of the input array
-"""
-def compute_zscores(arr):
-    mean = sum(arr) / len(arr)
-    std_dev = (sum([(x - mean) ** 2 for x in arr]) / len(arr)) ** 0.5
-    z_scores = [round((x - mean) / std_dev, 2) for x in arr]
-    return z_scores
 
 """
 function apply_plan

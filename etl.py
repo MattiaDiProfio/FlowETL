@@ -115,6 +115,7 @@ if __name__ == "__main__":
                             "from" : "post_etl_pipeline", 
                             "contents" : {
                                 'missing': {'missing_cells_percent': 0.0},
+                                'outliers' : {'numerical_outliers_percent' : 0.0},
                                 'duplicates': {'duplicate_rows_percent' : 0.0},
                                 'dq': 0.0
                             }

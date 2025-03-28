@@ -43,7 +43,7 @@ class ETLReport:
         # this is the pre-etl run info
         self.pre_etl_run_info = {
             'missing': {'missing_cells_percent': 0},
-            'outliers': {'numerical_cols_median' : {}}, # include the median values for all numberical columns, for example { 'price' : 14.99 },
+            'outliers' : {'numerical_outliers_percent' : 0},
             'duplicates': {'duplicate_rows_percent' : 0},
             'dq': 0
         }
@@ -51,7 +51,7 @@ class ETLReport:
         # this is the post-etl run info
         self.post_etl_run_info = {
             'missing': {'missing_cells_percent': 0},
-            'outliers': {'numerical_cols_median' : {}}, # include the median values for all numberical columns, for example { 'price' : 14.99 },
+            'outliers' : {'numerical_outliers_percent' : 0},
             'duplicates': {'duplicate_rows_percent' : 0},
             'dq': 0
         }
@@ -154,10 +154,12 @@ class ETLReport:
             {format_line("best-plan", self.planning_engine_info['best_plan'])}
             {format_header("-Pre-ETL Source Stats-")}
             {format_line("missing-cells-percent", f"{self.pre_etl_run_info['missing']['missing_cells_percent']} %")}
+            {format_line("numerical-outliers-percent", f"{self.pre_etl_run_info['outliers']['numerical_outliers_percent']} %")}
             {format_line("duplicate-rows-percent", f"{self.pre_etl_run_info['duplicates']['duplicate_rows_percent']} %")}
             {format_line("data-quality-score", self.pre_etl_run_info['dq'])}
             {format_header("-Post-ETL Source Stats")}
             {format_line("missing-cells-percent", f"{self.post_etl_run_info['missing']['missing_cells_percent']} %")}
+            {format_line("numerical-outliers-percent", f"{self.post_etl_run_info['outliers']['numerical_outliers_percent']} %")}
             {format_line("duplicate-rows-percent", f"{self.post_etl_run_info['duplicates']['duplicate_rows_percent']} %")}
             {format_line("data-quality-score", self.post_etl_run_info['dq'])}
             {format_final_line()}""")
