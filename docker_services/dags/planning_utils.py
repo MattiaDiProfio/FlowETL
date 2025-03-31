@@ -487,7 +487,7 @@ def compute_dq(internal_representation, schema):
             total_numerical_values_count += (len(internal_representation)-1)
 
     missing_values_ratio = total_null_values / total_cells
-    duplicate_rows_ratio = duplicate_rows / total_cells
+    duplicate_rows_ratio = duplicate_rows / row_count
     outliers_percent = total_numerical_outliers_count / total_numerical_values_count
 
     final_dq = 1 - abs((missing_values_ratio + duplicate_rows_ratio + outliers_percent)/3)

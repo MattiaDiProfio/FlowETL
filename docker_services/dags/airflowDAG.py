@@ -312,7 +312,8 @@ def compute_optimal_plan(ti):
 
     if best_plan == ():
         logging.warning("No plan managed to run successfully, consider providing more representative examples or increasing sample/examples sizes")
-        logging.warning("Returning partial plan.")
+        logging.warning("Returning default plan. ['missingValues/impute', 'duplicates', 'outliers/impute']")
+        best_plan = ['missingValues/impute', 'duplicates', 'outliers/impute']
 
     # construct planning engine metrics and send to kafka etlMetrics topic
     engine_metrics = {
