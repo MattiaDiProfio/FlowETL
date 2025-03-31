@@ -189,13 +189,10 @@ def infer_transformation_logic(ti):
     # construct the prompt
     prompt = f"""
     Write a python function which takes in a table represented by a 2D list and applies all the necessary steps required to transform the input table into the output one. 
-    
     Use the columns mapping and the table schemas provided to inform your decisions. 
-    
     Return only the python code, without justifying your decisions and without adding comments. 
 
     Here is an example to help you understand the task:
-
     Inputs
     Input table = [['first name', 'last_name', 'salary', 'tax'],['John', 'Snow', 45210, 0.25],['Amy', 'Smith', 59440, 0.30] ],
     Output table = [['Name', 'Salary', 'Tax (%)', 'Net Income'],['J. Snow', 45210, 25, 33908],['A. Smith', 59440, 30, 41608] ], 
@@ -221,23 +218,14 @@ def infer_transformation_logic(ti):
         return output_table
     
     Your code should leave cells with value of '_ext_' unchanged.
-
     Tip : if a column is populated with values separated by '|', use these values to infer the value for that column
-
     Notice how the method assumes that columns have been re-named already, hence it does not bother with this step. 
-    
     Also notice how the output code assumes that the input table is empty. 
-    
     See if applying mathematical or formatting functions to the values achieves the desired output.
-
     Include any required imports within the function. 
-    
     Only return valid python code. 
-
     The response will be turned into an executable using the exec() method, so it should be formatted such that no errors occur. 
-
     The code you return should also generalise to other inputs. 
-
     Do not overfit to the example input table.
     
     Now operate on the given artifacts:
