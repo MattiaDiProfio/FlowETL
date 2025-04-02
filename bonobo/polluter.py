@@ -141,7 +141,6 @@ def compute_etl_metrics(internal_representation, schema):
         "o" : round( total_numerical_outliers_count / total_numerical_values_count ,3) if total_numerical_values_count > 0 else 0
     }
 
-
 def inject_missing_values(ir, schema):
     for i in range(1, len(ir)):
         for j in range(len(ir[i])):
@@ -241,7 +240,6 @@ def load(path, reconstruction_key, ir):
 
     else:
         print("error")
-
 
 if __name__ == "__main__":
 
