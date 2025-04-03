@@ -252,8 +252,6 @@ class TestDataTaskNodes(unittest.TestCase):
         outlier = outlier_handler(duplicate, inferred_schema, 'impute')
         
         dq_after = compute_dq(outlier, inferred_schema)
-
-        print(dq_before, dq_after)
         self.assertTrue(dq_after > dq_before)
 
 if __name__ == '__main__':

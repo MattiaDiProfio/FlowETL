@@ -1,4 +1,3 @@
-/venv
 /docker_services/logs
 /docker_services/plugins
 /docker_services/.env
