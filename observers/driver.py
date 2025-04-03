@@ -10,11 +10,11 @@ from datetime import datetime
 
 if __name__ == "__main__":
 
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+    
     try:    
         kafka_producer = KafkaProducer(bootstrap_servers='localhost:9092', value_serializer=lambda v: json.dumps(v).encode('utf-8'), key_serializer=lambda k: k.encode('utf-8'))
-
-        root_logger = logging.getLogger()
-        root_logger.setLevel(logging.INFO)
 
         formatter = logging.Formatter('%(name)s %(levelname)s - %(asctime)s : %(message)s', datefmt='%d/%m/%Y %I:%M:%S %p')
 
