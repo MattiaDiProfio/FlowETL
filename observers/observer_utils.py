@@ -112,7 +112,7 @@ def to_internal(filepath):
     filename = filepath.split("\\")[-1]
 
     if filetype == 'csv':
-        with open(filepath, 'r', encoding='utf=8-sig') as file:
+        with open(filepath, 'r', encoding='utf=8-sig', errors='ignore') as file:
             internal_representation = [ row for row in csv.reader(file)]
             return (None, internal_representation)
             
@@ -145,6 +145,7 @@ def to_internal(filepath):
             extended_object_values = []
             for attribute in attributes_union:
                 extended_object_values.append(object[attribute] if attribute in object else '_ext_')
+                
             internal_representation.append(extended_object_values)
 
         return (associated_key, internal_representation)

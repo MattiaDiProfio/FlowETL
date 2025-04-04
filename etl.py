@@ -81,6 +81,14 @@ if __name__ == "__main__":
                     ir = to_internal("input\\source\\" + plan[0])[1]
                     schema = infer_schema(ir)
                     
+                    print()
+                    print()
+                    print(ir)
+                    print()
+                    print()
+                    print(schema)
+                    print()
+
                     # extract the pre_etl_metrics 
                     pre_etl_metrics = {
                         "from" : "pre_etl_pipeline", 

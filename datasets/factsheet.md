@@ -30,7 +30,7 @@ Here you will find the following information about all files within the `/datase
         - moves : moves_sequence
         - opening_name : opening_strategy_name
         - created : n/a
-        - dropped : increment_code, opening_eco, opening_ply
+        - dropped : last_move_at, increment_code, opening_eco, opening_ply
         - is_rated : TRUE/FALSE mapped to 1/0
         - winner : black/white mapped to b/w
         - moves_sequence : moves formatted as "move1-move2-...-moveN"

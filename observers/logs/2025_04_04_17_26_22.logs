@@ -1,0 +1,20 @@
+root INFO - 04/04/2025 05:26:22 PM : Connected to broker
+SourceObserver INFO - 04/04/2025 05:26:22 PM : Observer stopped on folder ..\input\source
+TargetObserver INFO - 04/04/2025 05:26:22 PM : Observer started on folder ..\input\target
+SourceObserver INFO - 04/04/2025 05:26:43 PM : detected file 'chess_games_source.csv'
+root INFO - 04/04/2025 05:26:43 PM : Extraction sample percentage set to 5.0%
+SourceObserver INFO - 04/04/2025 05:26:43 PM : Extracted 24092 objects from the uploaded file
+SourceObserver INFO - 04/04/2025 05:26:43 PM : Published the following metrics to Reporter : {'from': 'source_observer', 'contents': {'filename': 'chess_games_source.csv', 'objects_count': 24092, 'filesize_mbs': 2826.32}}
+kafka.conn INFO - 04/04/2025 05:26:43 PM : <BrokerConnection node_id=1001 host=localhost:9092 <connecting> [IPv6 ('::1', 9092, 0, 0)]>: connecting to localhost:9092 [('::1', 9092, 0, 0) IPv6]
+SourceObserver INFO - 04/04/2025 05:26:43 PM : Published the following information to broker - filename : 'chess_games_source.csv', associatedKey : 'None', contents (hidden) : 24092
+kafka.conn INFO - 04/04/2025 05:26:43 PM : <BrokerConnection node_id=1001 host=localhost:9092 <connecting> [IPv6 ('::1', 9092, 0, 0)]>: Connection complete.
+kafka.conn INFO - 04/04/2025 05:26:43 PM : <BrokerConnection node_id=bootstrap-0 host=localhost:9092 <connected> [IPv6 ('::1', 9092, 0, 0)]>: Closing connection. 
+TargetObserver INFO - 04/04/2025 05:26:49 PM : detected file 'chess_games_target.csv'
+root INFO - 04/04/2025 05:26:49 PM : Extraction sample percentage set to 5.0%
+TargetObserver INFO - 04/04/2025 05:26:49 PM : Extracted 5 objects from the uploaded file
+TargetObserver INFO - 04/04/2025 05:26:49 PM : Published the following metrics to Reporter : {'from': 'target_observer', 'contents': {'filename': 'chess_games_target.csv', 'objects_count': 5, 'filesize_mbs': 0.47}}
+TargetObserver INFO - 04/04/2025 05:26:49 PM : Published the following information to broker - filename : 'chess_games_target.csv', contents (hidden) : 5
+SourceObserver INFO - 04/04/2025 05:26:52 PM : Observer stopped
+TargetObserver INFO - 04/04/2025 05:26:52 PM : Observer stopped
+kafka.producer.kafka INFO - 04/04/2025 05:26:52 PM : Closing the Kafka producer with 0 secs timeout.
+kafka.producer.kafka INFO - 04/04/2025 05:26:52 PM : Proceeding to force close the producer since pending requests could not be completed within timeout 0.

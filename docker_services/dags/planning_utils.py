@@ -301,11 +301,15 @@ def gale_shapley(source, target, diff=0.05):
 
         iterations_elapsed += 1
 
-        iterations_threshold = max(len(X.keys()), len(Y.keys())) ** 2 # expect the number of iterations to be less than quadratic, if this is exceeded, likely a stalling point is reached
+        print("inloop", unmatched_x, matched_attributes)
+
+        iterations_threshold = 1000
         if iterations_elapsed > iterations_threshold:
             print("algorithm halted.")
-            return None
+            break
         
+    print("outloop", unmatched_x, matched_attributes)
+    
     # identify attributes from the Y set which are created
     for attribute in target:
         if attribute not in matched_attributes:
@@ -329,9 +333,10 @@ def gale_shapley(source, target, diff=0.05):
         if attribute not in temp:
             output['DROP'].append(attribute)
 
-    output['DROP'] = ",".join(output['DROP'])
+    output['DROP'] = ",".join(list(set(output['DROP'] + unmatched_x if unmatched_x else [])))
     output['CREATE'] = ",".join(output['CREATE'])
-
+    output.pop("", None)
+    
     return output
 
 

@@ -212,12 +212,13 @@ def infer_transformation_logic(ti):
         for row in input_table[1:]:
             first_name, last_name, salary, tax = row
             name = f'{{first_name[0]}}. {{last_name}}'
-            tax_percent = int(tax * 100)
-            net_income = int(salary - (salary * tax))
+            tax_percent = str(float(tax) * 100))
+            net_income = str(float(salary) - (float(salary) * float(tax)))
             output_table.append([name, salary, tax_percent, net_income])
         return output_table
     
     Your code should leave cells with value of '_ext_' unchanged.
+    Tip : before using any values for numerical operations, convert them to float. This is because in the input table they are likely stored as strings.
     Tip : if a column is populated with values separated by '|', use these values to infer the value for that column
     Notice how the method assumes that columns have been re-named already, hence it does not bother with this step. 
     Also notice how the output code assumes that the input table is empty. 
@@ -375,7 +376,7 @@ def publish_metrics(ti):
 
 
 with DAG(
-    'planner', 
+    'PlanningEngine', 
     default_args={'owner': 'airflow','retries': 1,'retry_delay': timedelta(minutes=5)},
     schedule_interval=None,  
     start_date=datetime(2025, 2, 4),  
