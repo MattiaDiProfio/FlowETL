@@ -166,7 +166,7 @@ def extract_sample(internal_representation, p=0.05):
 
     # choose sample of rows
 
-    cap = 50 # cap the IR sample to 50 entries
+    cap = 20 # cap the IR sample to 20 entries
     
     sampled_row_indices = random.sample(range(1, len(internal_representation)), int( min(cap, (len(internal_representation)-1) * p) ))
     for row_index in sampled_row_indices:

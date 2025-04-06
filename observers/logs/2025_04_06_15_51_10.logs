@@ -1,0 +1,20 @@
+root INFO - 06/04/2025 03:51:10 PM : Connected to broker
+SourceObserver INFO - 06/04/2025 03:51:10 PM : Observer stopped on folder ..\input\source
+TargetObserver INFO - 06/04/2025 03:51:10 PM : Observer started on folder ..\input\target
+SourceObserver INFO - 06/04/2025 03:51:23 PM : detected file 'social_media_posts_source.json'
+root INFO - 06/04/2025 03:51:23 PM : Extraction sample percentage set to 5.0%
+SourceObserver INFO - 06/04/2025 03:51:23 PM : Extracted 60 objects from the uploaded file
+SourceObserver INFO - 06/04/2025 03:51:23 PM : Published the following metrics to Reporter : {'from': 'source_observer', 'contents': {'filename': 'social_media_posts_source.json', 'objects_count': 60, 'filesize_mbs': 23.13}}
+SourceObserver INFO - 06/04/2025 03:51:23 PM : Published the following information to broker - filename : 'social_media_posts_source.json', associatedKey : 'None', contents (hidden) : 60
+kafka.conn INFO - 06/04/2025 03:51:23 PM : <BrokerConnection node_id=1001 host=localhost:9092 <connecting> [IPv6 ('::1', 9092, 0, 0)]>: connecting to localhost:9092 [('::1', 9092, 0, 0) IPv6]
+kafka.conn INFO - 06/04/2025 03:51:23 PM : <BrokerConnection node_id=1001 host=localhost:9092 <connecting> [IPv6 ('::1', 9092, 0, 0)]>: Connection complete.
+kafka.conn INFO - 06/04/2025 03:51:23 PM : <BrokerConnection node_id=bootstrap-0 host=localhost:9092 <connected> [IPv6 ('::1', 9092, 0, 0)]>: Closing connection. 
+TargetObserver INFO - 06/04/2025 03:51:28 PM : detected file 'social_media_posts_target.json'
+root INFO - 06/04/2025 03:51:28 PM : Extraction sample percentage set to 5.0%
+TargetObserver INFO - 06/04/2025 03:51:28 PM : Extracted 3 objects from the uploaded file
+TargetObserver INFO - 06/04/2025 03:51:28 PM : Published the following metrics to Reporter : {'from': 'target_observer', 'contents': {'filename': 'social_media_posts_target.json', 'objects_count': 3, 'filesize_mbs': 0.76}}
+TargetObserver INFO - 06/04/2025 03:51:28 PM : Published the following information to broker - filename : 'social_media_posts_target.json', contents (hidden) : 3
+SourceObserver INFO - 06/04/2025 03:51:30 PM : Observer stopped
+TargetObserver INFO - 06/04/2025 03:51:30 PM : Observer stopped
+kafka.producer.kafka INFO - 06/04/2025 03:51:30 PM : Closing the Kafka producer with 0 secs timeout.
+kafka.producer.kafka INFO - 06/04/2025 03:51:30 PM : Proceeding to force close the producer since pending requests could not be completed within timeout 0.
