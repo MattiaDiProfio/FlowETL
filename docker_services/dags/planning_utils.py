@@ -130,72 +130,48 @@ def compute_etl_metrics(internal_representation, schema):
         }
 
 
-def standardise_features(internal_representation, mapping):
+def standardise_features(IR, mapping):
+    for x, y in mapping.items():
 
-    for x_attribute, y_attribute in mapping.items():
+        if len(x) == 2:
 
-        source = x_attribute.split(",")
+            x1_column_name, x2_column_name = x
+            x1_indx, x2_indx = IR[0].index(x1_column_name), IR[0].index(x2_column_name)
 
-        if len(source) == 2:
+            IR[0][x1_indx] = y[0]
 
-            # need to merge multiple columns in the internal_representation and rename the resulting columns
-            x1_column_name, x2_column_name = source[0], source[1]
-            
-            # locate the indices where these columns occur within the headers of the internal representation
-            x1_indx, x2_indx = internal_representation[0].index(x1_column_name), internal_representation[0].index(x2_column_name)
+            for i, row in enumerate(IR[1:], start=1):
+                data_string = json.dumps(row[x1_indx]) + "|" + json.dumps(row[x2_indx]) 
+                values = data_string.replace('"', '').split('|')
+                merged_value = f"{values[0]}|{values[1]}"
+                row[x1_indx] = merged_value
 
-            # rename the column x1_column_name to y_attribute
-            internal_representation[0][x1_indx] = y_attribute
-
-            # join column x2 onto column x1
-            for row in internal_representation[1:]:
-                row[x1_indx] = (json.dumps(row[x1_indx])[1:-1] + " " + json.dumps(row[x2_indx])[1:-1]).strip()
-                
-            # drop column x2 from the internal representation
-            for row in internal_representation:
+            for i, row in enumerate(IR):
                 row.pop(x2_indx)
 
         else:
-            attribute = source[0]
+            if x == ():
 
-            # check if the attribute is one of the special keywords
-            if attribute == 'DROP':
-                
-                # extract the column names to be dropped
-                column_names_todrop = y_attribute.split(",")
+                for t in y:
+                    IR[0].append(t)
 
-                if column_names_todrop[0] != '': # this occurs when we try to split an empty string, aka there is nothing to drop
+                for row_indx in range(1, len(IR)):
+                    IR[row_indx].append('_ext_')
 
-                    # get the index of each column to be dropped within the headers of the internal representation
-                    column_names_todrop_indices = [ internal_representation[0].index(name) for name in column_names_todrop ]
+            elif y == ():
 
-                    # remove each column index from each row in the internal representation
-                    for i in range(len(internal_representation)):
-                        internal_representation[i] = [ internal_representation[i][j] for j in range(len(internal_representation[i])) if j not in column_names_todrop_indices ]
+                column_names_todrop_indices = [IR[0].index(s) for s in x]
 
-            elif attribute == 'CREATE':
-                
-                # extract the column names to be created
-                column_names_tocreate = y_attribute.split(",")
-
-                if column_names_tocreate[0] != '': # this occurs when we try to split an empty string, aka there is nothing to create
-
-                    # create a new column in the internal representation
-                    for name in column_names_tocreate:
-
-                        # extend the column headers
-                        internal_representation[0].append(name)
-
-                        # populate the new column
-                        for row_indx in range(1, len(internal_representation)):
-                            internal_representation[row_indx].append('_created_')
+                for i in range(len(IR)):
+                    original_row = IR[i]
+                    IR[i] = [IR[i][j] for j in range(len(IR[i])) if j not in column_names_todrop_indices]
 
             else:
-                # simply rename the column to whatever is the value of y_attribute
-                column_indx = internal_representation[0].index(attribute)
-                internal_representation[0][column_indx] = y_attribute
+                x, y = x[0], y[0] 
+                column_indx = IR[0].index(x)
+                IR[0][column_indx] = y
 
-    return internal_representation
+    return IR
 
 def compute_graphs(source, target, weight_threshold=0.5):
 
@@ -554,7 +530,9 @@ def apply_etl_plan(plan):
     mapping = plan[2]['standardiseFeatures']
 
     # apply the column mapping
-    ir = standardise_features(to_internal(filepath)[1], mapping)
+    ir = to_internal(filepath)[1]
+    mapping = extract_code(mapping)
+    ir = standardise_features(ir, mapping)
 
     # infer the schema from the internal representation
     schema = infer_schema(ir)
@@ -571,7 +549,7 @@ def apply_etl_plan(plan):
         if action == "outliers": ir = outlier_handler(ir, schema, strategy)
 
     # apply the final step of the plan, which is standardisation of values
-    llm_code = plan[-1]["standardiseValues"]
+    llm_code = extract_code(plan[-1]["standardiseValues"])
 
     namespace = {}
     compiled_code = compile(llm_code, "<string>", "exec")

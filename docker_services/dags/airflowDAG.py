@@ -9,7 +9,7 @@ import logging
 from kafka import KafkaConsumer, KafkaProducer
 from kafka.errors import KafkaError
 from openai import OpenAI
-from planning_utils import infer_schema, gale_shapley, generate_plans, compute_dq, apply_airflow_plan, extract_code
+from planning_utils import infer_schema, generate_plans, compute_dq, apply_airflow_plan, extract_code, standardise_features
 
 def consume_sample(ti):
     try:
@@ -133,82 +133,14 @@ def compute_schema_map(ti):
 
 def apply_schema_map(ti):
 
-    print("Pulling internal representation (IR)...")
     IR = json.loads(ti.xcom_pull(key='sample', task_ids='consumeSample'))
-    print("IR pulled:")
-    for row in IR:
-        print(row)
-
-    print("\nPulling schema map...")
     mapping = ti.xcom_pull(key='schema_map', task_ids='computeSchemaMap')
-    print("Schema map pulled:", mapping)
-
     mapping = extract_code(mapping)
-    print("check", mapping, type(mapping))
+
     if not mapping:
         raise AirflowFailException("Could not parse mapping!")
     
-    for x, y in mapping.items():
-        print(f"\nProcessing mapping: {x} -> {y}")
-
-        if len(x) == 2:
-            print("Case: Merge two source columns into one target column")
-
-            x1_column_name, x2_column_name = x
-            x1_indx, x2_indx = IR[0].index(x1_column_name), IR[0].index(x2_column_name)
-            print(f"Found column indices - {x1_column_name}: {x1_indx}, {x2_column_name}: {x2_indx}")
-
-            IR[0][x1_indx] = y[0]
-            print(f"Renamed header '{x1_column_name}' to '{y[0]}'")
-
-            for i, row in enumerate(IR[1:], start=1):
-                data_string = json.dumps(row[x1_indx]) + "|" + json.dumps(row[x2_indx]) 
-                values = data_string.replace('"', '').split('|')
-                merged_value = f"{values[0]}|{values[1]}"
-                print(f"Row {i} - Merging '{row[x1_indx]}' and '{row[x2_indx]}' -> '{merged_value}'")
-                row[x1_indx] = merged_value
-
-            for i, row in enumerate(IR):
-                print(f"Row {i} before dropping index {x2_indx}: {row}")
-                row.pop(x2_indx)
-                print(f"Row {i} after drop: {row}")
-
-        else:
-            if x == ():
-                print("Case: Create new columns:", y)
-
-                for t in y:
-                    IR[0].append(t)
-                    print(f"Appended new column to header: {t}")
-
-                for row_indx in range(1, len(IR)):
-                    IR[row_indx].append('_ext_')
-                    print(f"Row {row_indx} after appending '_ext_': {IR[row_indx]}")
-
-            elif y == ():
-                print("Case: Drop columns:", x)
-
-                column_names_todrop_indices = [IR[0].index(s) for s in x]
-                print("Column indices to drop:", column_names_todrop_indices)
-
-                for i in range(len(IR)):
-                    original_row = IR[i]
-                    IR[i] = [IR[i][j] for j in range(len(IR[i])) if j not in column_names_todrop_indices]
-                    print(f"Row {i} before: {original_row}")
-                    print(f"Row {i} after drop: {IR[i]}")
-
-            else:
-                print(f"Case: Rename single column {x} to {y}")
-                x, y = x[0], y[0] 
-                column_indx = IR[0].index(x)
-                print(f"Column '{x}' found at index {column_indx}")
-                IR[0][column_indx] = y
-                print(f"Header after rename: {IR[0]}")
-
-    print("\nFinal IR after applying schema map:")
-    for row in IR:
-        print(row)
-
+    IR = standardise_features(IR, mapping)
     ti.xcom_push(key="sample", value=IR)
 
 
