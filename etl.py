@@ -9,6 +9,10 @@ from datetime import datetime
 
 def load(path, reconstruction_key, ir, logger):
 
+    print("This is the IR fed into the load method ")
+    print(ir)
+
+
     # extract the filename from path
     filename = path.split("\\")[-1]
     file_ext = filename.split(".")[-1]
@@ -102,18 +106,21 @@ if __name__ == "__main__":
                         filepath, reconstruction_key, ir = apply_etl_plan(plan)
                         schema = infer_schema(ir)
                         if not ir: 
+                            print("No IR detected!")
                             raise BaseException()
                         
                         else:
                             root_logger.info(f"Applied plan to file '{filepath}'")
-                    
+
+                            print("loading...")
                             load(filepath, reconstruction_key, ir, root_logger)
+                            print("loading done")
 
                             post_etl_metrics = {
                                 "from" : "post_etl_pipeline", 
                                 "contents": compute_etl_metrics(ir, schema) # returns a dictionary of metrics {}
                             }
-
+                        
                             producer.send("etlMetrics", key="metrics", value=post_etl_metrics)
                             root_logger.info(f"Published the following metrics to Reporter : {post_etl_metrics}")
 
@@ -135,5 +142,6 @@ if __name__ == "__main__":
         producer.close()
         consumer.close()
 
-    except (NoBrokersAvailable, UnrecognizedBrokerVersion, ValueError):
+    except (NoBrokersAvailable, UnrecognizedBrokerVersion) as exc:
         root_logger.error("NoBrokersAvailable : no broker could be detected")
+        root_logger.error(exc)

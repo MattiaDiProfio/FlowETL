@@ -107,7 +107,11 @@ def compute_etl_metrics(internal_representation, schema):
         if schema[column_name] == 'number': 
 
             # compute the count of numerical outliers
-            column = [float(row[column_indx]) for row in internal_representation[1:]]
+            column = []
+            for row in internal_representation[1:]:
+                try: column.append(float(row[column_indx]))
+                except (ValueError, TypeError): continue
+
             median = np.median(column)
             mad = np.median(np.abs(column - median))
             threshold = 3
@@ -466,7 +470,10 @@ def compute_dq(internal_representation, schema):
         column_type = schema[column_name]
         if column_type == 'number':
             # compute the count of numerical outliers
-            column = [float(row[column_indx]) for row in internal_representation[1:] if row[column_indx] != '' and row[column_indx] is not None]
+            column = []
+            for row in internal_representation[1:]:
+                try: column.append(float(row[column_indx]))
+                except (ValueError, TypeError): continue
             median = np.median(column)
             mad = np.median(np.abs(column - median))
             threshold = 3
@@ -517,54 +524,86 @@ def apply_airflow_plan(internal_representation, schema, plan):
         return None
     
 def apply_etl_plan(plan):
+    print("Starting ETL plan application...")
 
-    # extract file name from plan
+    # Step 1: Extract file path from the plan
     filepath = "input\\source\\" + plan[0]
+    print(f"Filepath resolved: {filepath}")
 
-    # read file into internal representation and infer schema
-    # NOTE - this repetitive work could be avoided by having the DAG publish the artifacts, and spark read them from kafka
-
+    # Step 2: Extract the reconstruction key
     reconstruction_key = plan[1]['associated_key']
+    print(f"Reconstruction key: {reconstruction_key}")
 
-    # extract column mapping from plan
-    mapping = plan[2]['standardiseFeatures']
+    # Step 3: Extract column mapping code
+    mapping_code = plan[2]['standardiseFeatures']
+    mapping_code = extract_code(mapping_code)
+    print("Column mapping code extracted.")
 
-    # apply the column mapping
+    # Step 4: Read file and get internal representation (IR)
     ir = to_internal(filepath)[1]
-    mapping = extract_code(mapping)
-    ir = standardise_features(ir, mapping)
+    print(f"Internal representation loaded with {len(ir)} rows.")
 
-    # infer the schema from the internal representation
+    # Step 5: Apply column mapping to IR
+    ir = standardise_features(ir, mapping_code)
+    print("Standard feature mapping applied.")
+
+    # Step 6: Infer schema
     schema = infer_schema(ir)
+    print(f"Schema inferred: {schema}")
 
-    # parse the intermediary steps of the plan
+    # Step 7: Process intermediary steps (missing values, outliers, etc.)
     for step in plan[3:-1]:
-
         components = step.split("/")
         action = components[0]
-        if len(components) == 2:
-            strategy = components[1]
-        if action == "missingValues": ir = missing_value_handler(ir, schema, strategy)
-        if action == "duplicates": ir = duplicate_values_handler(ir)
-        if action == "outliers": ir = outlier_handler(ir, schema, strategy)
+        strategy = components[1] if len(components) == 2 else None
+        print(f"Applying step: {action}, strategy: {strategy}")
 
-    # apply the final step of the plan, which is standardisation of values
-    llm_code = extract_code(plan[-1]["standardiseValues"])
+        if action == "missingValues":
+            ir = missing_value_handler(ir, schema, strategy)
+            print("Missing values handled.")
+        elif action == "duplicates":
+            ir = duplicate_values_handler(ir)
+            print("Duplicates removed.")
+        elif action == "outliers":
+            ir = outlier_handler(ir, schema, strategy)
+            print("Outliers handled.")
+        else:
+            print(f"Unknown step: {step} — skipping.")
 
-    namespace = {}
-    compiled_code = compile(llm_code, "<string>", "exec")
-    exec(compiled_code, namespace)  # Execute in a separate namespace
+    # Step 8: Extract final transformation function
+    def extract_function(text):
+        start = text.find("```python") + len("```python")
+        end = text.find("```", start)
+        code_string = text[start:end].strip() if start > len("```python") - 1 and end != -1 else None
+        return code_string
 
-    transform_table = namespace['transform_table']
-
-    try:
-        output = transform_table(ir)
-    except (BaseException, TypeError, ValueError) as e:
-        # the ir is not modified, we return whatever we have before the failed method!
-        logging.error(f"Could not apply plan, encountered the following exception : {e}")
+    llm_code = extract_function(plan[-1]["standardiseValues"])
+    if not llm_code:
+        print("No transformation code found in final step.")
         return (filepath, None, None)
 
+    # Step 9: Compile and exec custom transformation function
+    namespace = {}
+    try:
+        compiled_code = compile(llm_code, "<string>", "exec")
+        exec(compiled_code, namespace)
+        transform_table = namespace['transform_table']
+        print("Custom transformation function loaded.")
+    except Exception as e:
+        print(f"Failed to compile/load transformation function: {e}")
+        return (filepath, None, None)
+
+    # Step 10: Apply final transformation
+    try:
+        output = transform_table(ir)
+        print("Final transformation applied.")
+    except (BaseException, TypeError, ValueError) as e:
+        print(f"Error applying final transformation: {e}")
+        return (filepath, None, None)
+
+    print("ETL plan completed successfully.")
     return (filepath, reconstruction_key, output)
+
 
 
 
