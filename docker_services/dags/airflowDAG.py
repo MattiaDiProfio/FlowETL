@@ -9,7 +9,7 @@ import logging
 from kafka import KafkaConsumer, KafkaProducer
 from kafka.errors import KafkaError
 from openai import OpenAI
-from planning_utils import infer_schema, gale_shapley, generate_plans, compute_dq, apply_airflow_plan
+from planning_utils import infer_schema, gale_shapley, generate_plans, compute_dq, apply_airflow_plan, extract_code
 
 def consume_sample(ti):
     try:
@@ -83,89 +83,135 @@ def compute_schema_map(ti):
     source_headers = list(source_schema.keys())
     target_headers = list(target_schema.keys())
 
-    # run gale-shapley to compute a schema map
-    schema_map = gale_shapley(source_headers, target_headers)
+    prompt = f"""
+    You are given a list of source column headers and target column headers. Your task is to infer a plausible mapping from source to target columns.
 
-    if not schema_map:
-        raise AirflowFailException("Schema map step failed due to algorithm timeout")
-    
-    # publish schema map to xcoms
-    ti.xcom_push(key="schema_map", value=schema_map)
+    Rules:
+    - At most two source attributes can be merged into one target attribute: represent this as `("s1", "s2"): ("t1")`
+    - A source attribute may also be split into two target attributes: represent this as `("s1"): ("t1", "t2")`
+    - If a source column is dropped, use an empty tuple as the value: `("s1"): ()`
+    - If a target column is created, use an empty tuple as the key: `(): ("t1")`
+    - Every source and target column can appear at most once in each mapping.
+
+    Additional constraints:
+    - Do not include placeholder values such as `None`
+    - Ensure no duplicate keys in the output
+    - Return a valid Python dictionary using tuple keys and values
+    - Do not add any comments, explanations, or surrounding text
+
+    Input:
+    Source columns = {source_headers}
+    Target columns = {target_headers}
+
+    Return your answer inside a Python code block in the following format:
+
+    ```python
+    {{ ("source1",): ("target1",), ... }}
+    ```
+    """
+
+    logging.info(f"LLM Prompt : \n{prompt} \n")
+    openrouter_key = os.environ.get('OPENROUTER_API_KEY')
+
+    response = requests.post(
+        url="https://openrouter.ai/api/v1/chat/completions",
+        headers={ "Authorization": f"Bearer {openrouter_key}" },
+        data=json.dumps({
+            "model" : "anthropic/claude-3.7-sonnet",
+            "messages" : [{ "role": "user", "content": prompt }]
+        })
+    )
+
+    if response.status_code == 200:
+        response_data = response.json()
+        schema_map = response_data['choices'][0]['message']['content']
+        logging.info(f"LLM Response : \n{schema_map} \n schema map = {schema_map}, type = {type(schema_map)}")
+        ti.xcom_push(key="schema_map", value=schema_map)
+    else:
+        raise AirflowFailException("Error occured during schema mapping inference step")
+
 
 def apply_schema_map(ti):
 
-    internal_representation = json.loads(ti.xcom_pull(key='sample', task_ids='consumeSample'))
+    print("Pulling internal representation (IR)...")
+    IR = json.loads(ti.xcom_pull(key='sample', task_ids='consumeSample'))
+    print("IR pulled:")
+    for row in IR:
+        print(row)
+
+    print("\nPulling schema map...")
     mapping = ti.xcom_pull(key='schema_map', task_ids='computeSchemaMap')
+    print("Schema map pulled:", mapping)
 
-    for x_attribute, y_attribute in mapping.items():
+    mapping = extract_code(mapping)
+    print("check", mapping, type(mapping))
+    if not mapping:
+        raise AirflowFailException("Could not parse mapping!")
+    
+    for x, y in mapping.items():
+        print(f"\nProcessing mapping: {x} -> {y}")
 
-        source = x_attribute.split(",")
+        if len(x) == 2:
+            print("Case: Merge two source columns into one target column")
 
-        if len(source) == 2:
+            x1_column_name, x2_column_name = x
+            x1_indx, x2_indx = IR[0].index(x1_column_name), IR[0].index(x2_column_name)
+            print(f"Found column indices - {x1_column_name}: {x1_indx}, {x2_column_name}: {x2_indx}")
 
-            # need to merge multiple columns in the internal_representation and rename the resulting columns
-            x1_column_name, x2_column_name = source[0], source[1]
-            
-            # locate the indices where these columns occur within the headers of the internal representation
-            x1_indx, x2_indx = internal_representation[0].index(x1_column_name), internal_representation[0].index(x2_column_name)
+            IR[0][x1_indx] = y[0]
+            print(f"Renamed header '{x1_column_name}' to '{y[0]}'")
 
-            # rename the column x1_column_name to y_attribute
-            internal_representation[0][x1_indx] = y_attribute
-
-            # join column x2 onto column x1
-            for row in internal_representation[1:]:
-                data_string = json.dumps(row[x1_indx]) + "|" + json.dumps(row[x2_indx]) # NOTE that this is a temporary fix until we figure out value normalisation!
+            for i, row in enumerate(IR[1:], start=1):
+                data_string = json.dumps(row[x1_indx]) + "|" + json.dumps(row[x2_indx]) 
                 values = data_string.replace('"', '').split('|')
-                row[x1_indx] = f"{values[0]}|{values[1]}"
+                merged_value = f"{values[0]}|{values[1]}"
+                print(f"Row {i} - Merging '{row[x1_indx]}' and '{row[x2_indx]}' -> '{merged_value}'")
+                row[x1_indx] = merged_value
 
-                
-
-            # drop column x2 from the internal representation
-            for row in internal_representation:
+            for i, row in enumerate(IR):
+                print(f"Row {i} before dropping index {x2_indx}: {row}")
                 row.pop(x2_indx)
+                print(f"Row {i} after drop: {row}")
 
         else:
-            attribute = source[0]
+            if x == ():
+                print("Case: Create new columns:", y)
 
-            # check if the attribute is one of the special keywords
-            if attribute == 'DROP':
-                
-                # extract the column names to be dropped
-                column_names_todrop = y_attribute.split(",")
+                for t in y:
+                    IR[0].append(t)
+                    print(f"Appended new column to header: {t}")
 
-                if column_names_todrop[0] != '': # this occurs when we try to split an empty string, aka there is nothing to drop
+                for row_indx in range(1, len(IR)):
+                    IR[row_indx].append('_ext_')
+                    print(f"Row {row_indx} after appending '_ext_': {IR[row_indx]}")
 
-                    # get the index of each column to be dropped within the headers of the internal representation
-                    column_names_todrop_indices = [ internal_representation[0].index(name) for name in column_names_todrop ]
+            elif y == ():
+                print("Case: Drop columns:", x)
 
-                    # remove each column index from each row in the internal representation
-                    for i in range(len(internal_representation)):
-                        internal_representation[i] = [ internal_representation[i][j] for j in range(len(internal_representation[i])) if j not in column_names_todrop_indices ]
+                column_names_todrop_indices = [IR[0].index(s) for s in x]
+                print("Column indices to drop:", column_names_todrop_indices)
 
-            elif attribute == 'CREATE':
-                
-                # extract the column names to be created
-                column_names_tocreate = y_attribute.split(",")
-
-                if column_names_tocreate[0] != '': # this occurs when we try to split an empty string, aka there is nothing to create
-
-                    # create a new column in the internal representation
-                    for name in column_names_tocreate:
-
-                        # extend the column headers
-                        internal_representation[0].append(name)
-
-                        # populate the new column
-                        for row_indx in range(1, len(internal_representation)):
-                            internal_representation[row_indx].append('_ext_')
+                for i in range(len(IR)):
+                    original_row = IR[i]
+                    IR[i] = [IR[i][j] for j in range(len(IR[i])) if j not in column_names_todrop_indices]
+                    print(f"Row {i} before: {original_row}")
+                    print(f"Row {i} after drop: {IR[i]}")
 
             else:
-                # simply rename the column to whatever is the value of y_attribute
-                column_indx = internal_representation[0].index(attribute)
-                internal_representation[0][column_indx] = y_attribute
+                print(f"Case: Rename single column {x} to {y}")
+                x, y = x[0], y[0] 
+                column_indx = IR[0].index(x)
+                print(f"Column '{x}' found at index {column_indx}")
+                IR[0][column_indx] = y
+                print(f"Header after rename: {IR[0]}")
 
-    # push the new internal representation to xcoms, this time the IR has been adapted to match the schema map
-    ti.xcom_push(key="sample", value=internal_representation)
+    print("\nFinal IR after applying schema map:")
+    for row in IR:
+        print(row)
+
+    ti.xcom_push(key="sample", value=IR)
+
+
 
 
 def infer_modified_schema(ti):
@@ -184,61 +230,48 @@ def infer_transformation_logic(ti):
     outputTable = ti.xcom_pull(key='target', task_ids='consumeTarget')
     inputSchema = ti.xcom_pull(key='source_schema', task_ids='inferModifiedSchema')
     outputSchema = ti.xcom_pull(key='target_schema', task_ids='inferInitialSchemas')
-    mapping = ti.xcom_pull(key='schema_map', task_ids='computeSchemaMap')
+    mapping = extract_code(ti.xcom_pull(key='schema_map', task_ids='computeSchemaMap'))
 
     # construct the prompt
     prompt = f"""
-    Write a python function which takes in a table represented by a 2D list and applies all the necessary steps required to transform the input table into the output one. 
-    Use the columns mapping and the table schemas provided to inform your decisions. 
-    Return only the python code, without justifying your decisions and without adding comments. 
+    You are given two tables represented as 2D lists: an input table and an output table. Your task is to write a Python function that transforms the input table into the output table.
 
-    Here is an example to help you understand the task:
-    Inputs
-    Input table = [['first name', 'last_name', 'salary', 'tax'],['John', 'Snow', 45210, 0.25],['Amy', 'Smith', 59440, 0.30] ],
-    Output table = [['Name', 'Salary', 'Tax (%)', 'Net Income'],['J. Snow', 45210, 25, 33908],['A. Smith', 59440, 30, 41608] ], 
-    Input table schema = {{'first name' : 'string', 'last_name' : 'string', 'salary' : 'number', 'tax' : 'number' }},
-    Output table schema = {{'Name' : 'string', 'Salary' : 'number', 'Tax (%)' : 'number', 'Net Income' : 'number'}},
-    Input-Output columns mapping = {{ "first name,last_name" : "Name", "salary" : "Salary", "tax" : "Tax (%)", "CREATE" : "Net Income", "DROP" : "" }}
+    Your function must:
+    - Perform the necessary data transformations to match the output table
+    - Use the provided column mapping and schemas to guide your logic
+    - Leave any cell with the value '_ext_' unchanged
+    - Handle numeric operations carefully: convert strings to float before using them
+    - If a value is in the form "A|B", you may use both components for derived values
+    - Assume column renaming and reordering is already done
 
-    Process:
-    Use the Input-Output columns mapping to notice that the 'first name' and 'last_name' columns from the input table are merged into the 'Name' column in the output.
-    The values of these columns are merged by abbreviating the first name and joining it to last name, with a space in between.
-    The column 'salary' is simply renamed, while the 'tax' column is renamed to 'Tax %' and the values are multiplied by 100. The mapping contains two special keys, 'CREATE'
-    and 'DROP'. The 'CREATE' key tells us that 'Net Income' is a new column, and looking at the other columns we see that it is likely populated by taking the product of 'salary' and 'tax'.
+    Special mapping rules:
+    - `("col1", "col2") -> ("new_col",)` means you should merge these two columns into one
+    - `("col",) -> ("new_col",)` means this column was renamed (already done)
+    - `("col",) -> ()` means this column was dropped — you don’t need to process it
+    - `() -> ("new_col",)` means a new column was created — use other values to populate it
+    - `("col1",) -> ("new_col1", "new_col2")` means this column is split into two new columns - use the original column values to populate them
 
-    Output:
-    def transform_table(input_table):
-        output_table = [["Name", "Salary", "Tax (%)", "Net Income"]] # taken from Input-Output columns mapping
-        for row in input_table[1:]:
-            first_name, last_name, salary, tax = row
-            name = f'{{first_name[0]}}. {{last_name}}'
-            tax_percent = str(float(tax) * 100))
-            net_income = str(float(salary) - (float(salary) * float(tax)))
-            output_table.append([name, salary, tax_percent, net_income])
-        return output_table
+    Important:
+    - Return only a valid, executable Python function — no explanations, no comments
+    - Your response will be evaluated by `exec()`, so the code must not contain errors
+    - Your logic should generalize to similar tables — **do not hardcode and do not provide samples**. Operate on the input table instead.
     
-    Your code should leave cells with value of '_ext_' unchanged.
-    Tip : before using any values for numerical operations, convert them to float. This is because in the input table they are likely stored as strings.
-    Tip : if a column is populated with values separated by '|', use these values to infer the value for that column
-    Notice how the method assumes that columns have been re-named already, hence it does not bother with this step. 
-    Also notice how the output code assumes that the input table is empty. 
-    See if applying mathematical or formatting functions to the values achieves the desired output.
-    Include any required imports within the function. 
-    Only return valid python code. 
-    The response will be turned into an executable using the exec() method, so it should be formatted such that no errors occur. 
-    The code you return should also generalise to other inputs. 
-    Do not overfit to the example input table.
-    
-    Now operate on the given artifacts:
-    Input table = {inputTable}, Output table = {outputTable}, Input table schema = {inputSchema}, Output table schema = {outputSchema}, Input-Output columns mapping = {mapping}
-    """
+    Generate the code for the following:
+
+    Input Table: {inputTable}
+
+    Output Table: {outputTable}
+
+    Input Schema: {inputSchema}
+
+    Output Schema: {outputSchema}
+
+    Column Mapping: {mapping}
+
+    Respond only with Python code — nothing else. """
+
 
     logging.info(f"LLM Prompt : \n{prompt} \n")
-
-    def extract_code(text):
-        start = text.find("```python") + len("```python")
-        end = text.find("```", start)
-        return text[start:end].strip() if start > len("```python") - 1 and end != -1 else None
 
     # do inference on the LLM
     openrouter_key = os.environ.get('OPENROUTER_API_KEY')
@@ -260,8 +293,8 @@ def infer_transformation_logic(ti):
 
     if response.status_code == 200:
         response_data = response.json()
-        response = extract_code(response_data['choices'][0]['message']['content'])
-        logging.info(f"LLM Response : \n{response} \n")
+        response = response_data['choices'][0]['message']['content']
+        print(f"LLM Response : \n{response} \n")
         ti.xcom_push(key="llm_response", value=response)
 
     else:
@@ -376,7 +409,7 @@ def publish_metrics(ti):
 
 
 with DAG(
-    'PlanningEngine', 
+    'computer', 
     default_args={'owner': 'airflow','retries': 1,'retry_delay': timedelta(minutes=5)},
     schedule_interval=None,  
     start_date=datetime(2025, 2, 4),  

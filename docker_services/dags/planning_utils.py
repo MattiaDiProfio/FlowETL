@@ -5,6 +5,15 @@ from thefuzz import fuzz
 from sentence_transformers import SentenceTransformer
 import logging
 import numpy as np
+import ast
+
+
+def extract_code(text):
+    start = text.find("```python") + len("```python")
+    end = text.find("```", start)
+    code_string = text[start:end].strip() if start > len("```python") - 1 and end != -1 else None
+    return ast.literal_eval(code_string) if code_string else None
+
 
 def generate_plans():
     
