@@ -6,7 +6,7 @@ from sentence_transformers import SentenceTransformer
 import logging
 import numpy as np
 import ast
-
+import traceback
 
 def extract_code(text):
     start = text.find("```python") + len("```python")
@@ -94,7 +94,11 @@ def compute_etl_metrics(internal_representation, schema):
     # compute count of unique rows (duplicates)
     seen = set()
     for row in internal_representation:
-        hashed_row = "".join(row)
+        cells = []
+        for item in row:
+            try: cells.append(str(item))
+            except Exception: cells.append("NA")  
+        hashed_row = "".join(cells)
         seen.add(hashed_row)
     
     duplicates_count = abs(row_count - len(seen))
@@ -340,8 +344,7 @@ def missing_value_handler(internal_representation, schema, strategy):
         for row_indx in range(1, len(internal_representation)):
             cell = internal_representation[row_indx][column_indx]
             if cell is None or cell == '':
-                if column_type == 'number': internal_representation[row_indx][column_indx] = 0.0
-                elif column_type == 'boolean': internal_representation[row_indx][column_indx] = False
+                if column_type == 'number': internal_representation[row_indx][column_indx] = str(0.0)
                 elif column_type == 'ambiguous': internal_representation[row_indx][column_indx] = [] if isinstance(cell, list) else {}
                 else: internal_representation[row_indx][column_indx] = 'NA' # this covers both string and complex data types
     
@@ -560,7 +563,9 @@ def apply_etl_plan(plan):
         if action == "missingValues":
             ir = missing_value_handler(ir, schema, strategy)
             print("Missing values handled.")
+            print()
             print(ir[:10])
+            print()
         elif action == "duplicates":
             ir = duplicate_values_handler(ir)
             print("Duplicates removed.")
@@ -587,10 +592,13 @@ def apply_etl_plan(plan):
     try:
         compiled_code = compile(llm_code, "<string>", "exec")
         exec(compiled_code, namespace)
+        print(namespace.keys())
         transform_table = namespace['transform_table']
+        print("transform_table = ", transform_table)
         print("Custom transformation function loaded.")
     except Exception as e:
-        print(f"Failed to compile/load transformation function: {e}")
+        print("Failed to compile/load transformation function:")
+        traceback.print_exc()  # This prints the full traceback
         return (filepath, None, None)
 
     # Step 10: Apply final transformation
