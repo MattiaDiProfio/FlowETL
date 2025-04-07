@@ -1,0 +1,6 @@
+id,heart_rate_bpm,blood_oxygen_level_%,step_count,hours_slept,activity_level,stress_level
+3904,98.0,98.0,6955,6.4,active,low
+4298,73.0,96.0,4377,7.0,highly active,high
+1573,70.0,96.4,7832,5.4,sedentary,high
+3520,55.0,97.4,8155,6.8,sedentary,high
+2955,77.0,98.0,2527,8.0,sedentary,medium

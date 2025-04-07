@@ -345,7 +345,7 @@ def missing_value_handler(internal_representation, schema, strategy):
             cell = internal_representation[row_indx][column_indx]
             if cell is None or cell == '':
                 if column_type == 'number': internal_representation[row_indx][column_indx] = str(0.0)
-                elif column_type == 'ambiguous': internal_representation[row_indx][column_indx] = [] if isinstance(cell, list) else {}
+                # elif column_type == 'ambiguous': internal_representation[row_indx][column_indx] = [] if isinstance(cell, list) else {}
                 else: internal_representation[row_indx][column_indx] = 'NA' # this covers both string and complex data types
     
     # elif strategy == 'drop.rows':
@@ -636,7 +636,7 @@ def to_internal(filepath):
     # it essentially tells us which key the list of objects we will transform belongs to!
 
     if filetype == 'csv':
-        with open(filepath, 'r', encoding='utf=8-sig') as file:
+        with open(filepath, 'r', encoding='latin1') as file:
             internal_representation = [ row for row in csv.reader(file)]
         return (None, internal_representation)
             
