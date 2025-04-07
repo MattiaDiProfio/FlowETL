@@ -147,11 +147,11 @@ Here you will find the following information about all files within the `/datase
     - transformations outline
         - User ID : id
         - Heart Rate (BPM) : heart_rate_bpm
-        - Blood Oxygen Level (%) : 
-        - Step Count : 
-        - Sleep Duration (hours) : 
-        - Activity Level : 
-        - Stress Level : 
+        - Blood Oxygen Level (%) : blood_oxygen_level_% 
+        - Step Count : step_count
+        - Sleep Duration (hours) : hours_slept
+        - Activity Level : activity_level
+        - Stress Level : stress_level
         - created : n/a
         - dropped : n/a
         - heart_rate_bpm, blood_oxygen_level_%, hours_slept : all rounded to 1 decimal place
