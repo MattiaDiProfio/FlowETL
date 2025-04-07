@@ -125,7 +125,7 @@ def compute_etl_metrics(internal_representation, schema):
             # compute total numer of numerical values
             total_numerical_values_count += (len(internal_representation)-1)
 
-    outliers_percent = round((total_numerical_outliers_count / total_numerical_values_count) * 100, 3)
+    outliers_percent = round((total_numerical_outliers_count / total_numerical_values_count) * 100, 3) if total_numerical_values_count > 0 else 0.0
 
     # compute the dataquality of the IR
     ir_dq = round(compute_dq(internal_representation, schema), 3)
@@ -487,7 +487,7 @@ def compute_dq(internal_representation, schema):
 
     missing_values_ratio = total_null_values / total_cells
     duplicate_rows_ratio = duplicate_rows / row_count
-    outliers_percent = total_numerical_outliers_count / total_numerical_values_count
+    outliers_percent = total_numerical_outliers_count / total_numerical_values_count if total_numerical_values_count > 0 else 0.0
 
     final_dq = 1 - abs((missing_values_ratio + duplicate_rows_ratio + outliers_percent)/3)
     return final_dq

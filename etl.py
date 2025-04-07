@@ -34,6 +34,10 @@ def load(path, reconstruction_key, ir, logger):
                     obj[key] = value
             reconstructed_objs.append(obj)
 
+        print("\nreconstructed objects:\n\n")
+        print(reconstructed_objs)
+        print("\n\n\n")
+
         # read over json file, making sure to keep non-transformed attributes
         with open(path, 'r') as file:
             dictionary = json.load(file)
@@ -41,8 +45,13 @@ def load(path, reconstruction_key, ir, logger):
         if reconstruction_key and reconstruction_key in dictionary:
             dictionary[reconstruction_key] = reconstructed_objs
 
-        with open("output\\" + filename, "w") as file:
-            json.dump(dictionary, file, indent=4)
+            with open("output\\" + filename, "w") as file:
+                json.dump(dictionary, file, indent=4)
+
+        else:
+            # this occurs when the source json is just a list of objects
+            with open("output\\" + filename, "w") as file:
+                json.dump(reconstructed_objs, file, indent=4)
 
         logger.info(f"Successfully loaded the transformed file to '\\output'")
 
