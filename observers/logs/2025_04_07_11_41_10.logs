@@ -1,0 +1,20 @@
+root INFO - 07/04/2025 11:41:10 AM : Connected to broker
+SourceObserver INFO - 07/04/2025 11:41:10 AM : Observer stopped on folder ..\input\source
+TargetObserver INFO - 07/04/2025 11:41:10 AM : Observer started on folder ..\input\target
+SourceObserver INFO - 07/04/2025 11:41:34 AM : detected file 'students_grades_source.json'
+root INFO - 07/04/2025 11:41:35 AM : Extraction sample percentage set to 5.0%
+SourceObserver INFO - 07/04/2025 11:41:35 AM : Extracted 5000 objects from the uploaded file
+SourceObserver INFO - 07/04/2025 11:41:35 AM : Published the following metrics to Reporter : {'from': 'source_observer', 'contents': {'filename': 'students_grades_source.json', 'objects_count': 5000, 'filesize_mbs': 1987.69}}
+SourceObserver INFO - 07/04/2025 11:41:35 AM : Published the following information to broker - filename : 'students_grades_source.json', associatedKey : 'None', contents (hidden) : 5000
+kafka.conn INFO - 07/04/2025 11:41:35 AM : <BrokerConnection node_id=1001 host=localhost:9092 <connecting> [IPv6 ('::1', 9092, 0, 0)]>: connecting to localhost:9092 [('::1', 9092, 0, 0) IPv6]
+kafka.conn INFO - 07/04/2025 11:41:35 AM : <BrokerConnection node_id=1001 host=localhost:9092 <connecting> [IPv6 ('::1', 9092, 0, 0)]>: Connection complete.
+kafka.conn INFO - 07/04/2025 11:41:35 AM : <BrokerConnection node_id=bootstrap-0 host=localhost:9092 <connected> [IPv6 ('::1', 9092, 0, 0)]>: Closing connection. 
+TargetObserver INFO - 07/04/2025 11:41:42 AM : detected file 'students_grades_target.json'
+root INFO - 07/04/2025 11:41:42 AM : Extraction sample percentage set to 5.0%
+TargetObserver INFO - 07/04/2025 11:41:42 AM : Extracted 3 objects from the uploaded file
+TargetObserver INFO - 07/04/2025 11:41:42 AM : Published the following metrics to Reporter : {'from': 'target_observer', 'contents': {'filename': 'students_grades_target.json', 'objects_count': 3, 'filesize_mbs': 1.12}}
+TargetObserver INFO - 07/04/2025 11:41:42 AM : Published the following information to broker - filename : 'students_grades_target.json', contents (hidden) : 3
+SourceObserver INFO - 07/04/2025 11:41:45 AM : Observer stopped
+TargetObserver INFO - 07/04/2025 11:41:45 AM : Observer stopped
+kafka.producer.kafka INFO - 07/04/2025 11:41:45 AM : Closing the Kafka producer with 0 secs timeout.
+kafka.producer.kafka INFO - 07/04/2025 11:41:45 AM : Proceeding to force close the producer since pending requests could not be completed within timeout 0.
