@@ -332,58 +332,57 @@ def gale_shapley(source, target, diff=0.05):
 def missing_value_handler(internal_representation, schema, strategy):
     headers = internal_representation[0]
 
-    if strategy == 'impute':
+    # if strategy == 'impute':
 
-        for column_indx, column_name in enumerate(headers):
-            column_type = schema[column_name] # get the column's type
-            # impute the cell according to its column's type
-            for row_indx in range(1, len(internal_representation)):
-                cell = internal_representation[row_indx][column_indx]
-                if cell is None or cell == '':
-                    if column_type == 'number': internal_representation[row_indx][column_indx] = 0.0
-                    elif column_type == 'boolean': internal_representation[row_indx][column_indx] = False
-                    elif column_type == 'ambiguous': 
-                        internal_representation[row_indx][column_indx] = [] if isinstance(cell, list) else {}
-                    else: internal_representation[row_indx][column_indx] = 'NA' # this covers both string and complex data types
-
-    elif strategy == 'drop.rows':
-
-        # store all indices of rows to be dropped from the internal representation
-        null_rows_indices = []
-        # drop all rows which contain a null value
+    for column_indx, column_name in enumerate(headers):
+        column_type = schema[column_name] # get the column's type
+        # impute the cell according to its column's type
         for row_indx in range(1, len(internal_representation)):
-            for cell in internal_representation[row_indx]:
-                if cell is None or cell == '':
-                    row_offset = len(null_rows_indices) # compute offset to account for number of rows decreasing during drop operation
-                    null_rows_indices.append(row_indx - row_offset)
-                    break
+            cell = internal_representation[row_indx][column_indx]
+            if cell is None or cell == '':
+                if column_type == 'number': internal_representation[row_indx][column_indx] = 0.0
+                elif column_type == 'boolean': internal_representation[row_indx][column_indx] = False
+                elif column_type == 'ambiguous': internal_representation[row_indx][column_indx] = [] if isinstance(cell, list) else {}
+                else: internal_representation[row_indx][column_indx] = 'NA' # this covers both string and complex data types
+    
+    # elif strategy == 'drop.rows':
+
+    #     # store all indices of rows to be dropped from the internal representation
+    #     null_rows_indices = []
+    #     # drop all rows which contain a null value
+    #     for row_indx in range(1, len(internal_representation)):
+    #         for cell in internal_representation[row_indx]:
+    #             if cell is None or cell == '':
+    #                 row_offset = len(null_rows_indices) # compute offset to account for number of rows decreasing during drop operation
+    #                 null_rows_indices.append(row_indx - row_offset)
+    #                 break
         
-        for index in null_rows_indices:
-            internal_representation.pop(index)
+    #     for index in null_rows_indices:
+    #         internal_representation.pop(index)
 
-    elif strategy == 'drop.columns': 
+    # elif strategy == 'drop.columns': 
 
-        null_columns_indices = []        
-        for column_indx, column_name in enumerate(headers):
+    #     null_columns_indices = []        
+    #     for column_indx, column_name in enumerate(headers):
 
-            # drop all columns which contain more than 50% null values
-            null_cells_count = 0
+    #         # drop all columns which contain more than 50% null values
+    #         null_cells_count = 0
 
-            for row in internal_representation[1:]:
-                if row[column_indx] == "" or row[column_indx] is None:
-                    null_cells_count += 1
+    #         for row in internal_representation[1:]:
+    #             if row[column_indx] == "" or row[column_indx] is None:
+    #                 null_cells_count += 1
             
-            # compute the ratio of null cells in the current column
-            null_ratio = null_cells_count / (len(internal_representation)-1)
-            if null_ratio >= 0.5:
-                null_columns_indices.append(column_indx)
+    #         # compute the ratio of null cells in the current column
+    #         null_ratio = null_cells_count / (len(internal_representation)-1)
+    #         if null_ratio >= 0.5:
+    #             null_columns_indices.append(column_indx)
         
-        # remove all flagged columns by filtering them out
-        for row_indx, row in enumerate(internal_representation):
-            internal_representation[row_indx] = [row[i] for i in range(len(row)) if i not in null_columns_indices]
+    #     # remove all flagged columns by filtering them out
+    #     for row_indx, row in enumerate(internal_representation):
+    #         internal_representation[row_indx] = [row[i] for i in range(len(row)) if i not in null_columns_indices]
 
-    else:
-        logging.error(f"Strategy '{strategy}' not supported for handling missing values.")
+    # else:
+    #     logging.error(f"Strategy '{strategy}' not supported for handling missing values.")
 
     return internal_representation
 
@@ -561,6 +560,7 @@ def apply_etl_plan(plan):
         if action == "missingValues":
             ir = missing_value_handler(ir, schema, strategy)
             print("Missing values handled.")
+            print(ir[:10])
         elif action == "duplicates":
             ir = duplicate_values_handler(ir)
             print("Duplicates removed.")
