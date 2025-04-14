@@ -1,0 +1,26 @@
++ -------------------------------------------ETL Report------------------------------------------- +
+| time-elapsed: 106.169372 s                                                                       |
++ ----------------------------------------Source File Info---------------------------------------- +
+| filename: students_grades_source.json                                                            |
+| objects-count: 5000                                                                              |
+| filesize: 1987.69 MBs                                                                            |
++ ----------------------------------------Target File Info---------------------------------------- +
+| filename: students_grades_target.json                                                            |
+| objects-count: 3                                                                                 |
+| filesize: 1.12 MBs                                                                               |
++ --------------------------------------Planning Engine Stats------------------------------------- +
+| plans-computed: 36                                                                               |
+| plans-failed: 0                                                                                  |
+| max-data-quality-score: 0.983                                                                    |
+| best-plan: ['missingValues/impute', 'duplicates', 'outliers/impute']                             |
++ --------------------------------------Pre-ETL Source Stats-------------------------------------- +
+| missing-cells-percent: 1.754 %                                                                   |
+| numerical-outliers-percent: 0.0 %                                                                |
+| duplicate-rows-percent: 0.02 %                                                                   |
+| data-quality-score: 0.994                                                                        |
++ --------------------------------------Post-ETL Source Stats------------------------------------- +
+| missing-cells-percent: 0.0 %                                                                     |
+| numerical-outliers-percent: 0.0 %                                                                |
+| duplicate-rows-percent: 0.02 %                                                                   |
+| data-quality-score: 1.0                                                                          |
++ ------------------------------------------------------------------------------------------------ +
