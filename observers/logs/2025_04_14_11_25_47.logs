@@ -1,0 +1,20 @@
+root INFO - 14/04/2025 11:25:47 AM : Connected to broker
+SourceObserver INFO - 14/04/2025 11:25:47 AM : Observer stopped on folder ..\input\source
+TargetObserver INFO - 14/04/2025 11:25:47 AM : Observer started on folder ..\input\target
+SourceObserver INFO - 14/04/2025 11:26:35 AM : detected file 'financial_compliance_source.csv'
+root INFO - 14/04/2025 11:26:35 AM : Extraction sample percentage set to 5.0%
+SourceObserver INFO - 14/04/2025 11:26:35 AM : Extracted 116 objects from the uploaded file
+SourceObserver INFO - 14/04/2025 11:26:35 AM : Published the following metrics to Reporter : {'from': 'source_observer', 'contents': {'filename': 'financial_compliance_source.csv', 'objects_count': 116, 'filesize_mbs': 2.67}}
+kafka.conn INFO - 14/04/2025 11:26:35 AM : <BrokerConnection node_id=1001 host=localhost:9092 <connecting> [IPv6 ('::1', 9092, 0, 0)]>: connecting to localhost:9092 [('::1', 9092, 0, 0) IPv6]
+SourceObserver INFO - 14/04/2025 11:26:35 AM : Published the following information to broker - filename : 'financial_compliance_source.csv', associatedKey : 'None', contents (hidden) : 116
+kafka.conn INFO - 14/04/2025 11:26:35 AM : <BrokerConnection node_id=1001 host=localhost:9092 <connecting> [IPv6 ('::1', 9092, 0, 0)]>: Connection complete.
+kafka.conn INFO - 14/04/2025 11:26:35 AM : <BrokerConnection node_id=bootstrap-0 host=localhost:9092 <connected> [IPv6 ('::1', 9092, 0, 0)]>: Closing connection. 
+TargetObserver INFO - 14/04/2025 11:26:44 AM : detected file 'financial_compliance_target.csv'
+root INFO - 14/04/2025 11:26:44 AM : Extraction sample percentage set to 5.0%
+TargetObserver INFO - 14/04/2025 11:26:44 AM : Extracted 5 objects from the uploaded file
+TargetObserver INFO - 14/04/2025 11:26:44 AM : Published the following metrics to Reporter : {'from': 'target_observer', 'contents': {'filename': 'financial_compliance_target.csv', 'objects_count': 5, 'filesize_mbs': 0.27}}
+TargetObserver INFO - 14/04/2025 11:26:44 AM : Published the following information to broker - filename : 'financial_compliance_target.csv', contents (hidden) : 5
+SourceObserver INFO - 14/04/2025 11:26:47 AM : Observer stopped
+TargetObserver INFO - 14/04/2025 11:26:47 AM : Observer stopped
+kafka.producer.kafka INFO - 14/04/2025 11:26:47 AM : Closing the Kafka producer with 0 secs timeout.
+kafka.producer.kafka INFO - 14/04/2025 11:26:47 AM : Proceeding to force close the producer since pending requests could not be completed within timeout 0.
