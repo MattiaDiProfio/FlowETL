@@ -1,0 +1,14 @@
+Dataset,Time Elapsed,Data Quality,Missing %,Duplicates %,Outliers %,PlanEval Score,Comment
+Amazon Stock CSV,140.2,0.96,0.0,12.5,0.0,0.96,plan applied correctly
+Chess Games CSV,102.3,0.0,0.0,0.0,0.0,1.0,etl worker failed
+E-commerce Transactions CSV,99.4,0.99,0.0,5.6,0.0,0.90,plan applied correctly
+Financial Compliance CSV,111.9,0.0,0.0,0.0,0.0,0.90,etl worker failed
+Netflix Users CSV,79.5,0.98,13.3,20.0,0.0,0.85,plan applied correctly
+Pixar Films CSV,95.7,0.98,2.8,3.6,6.1,0.88,plan applied correctly
+Smartwatch Readings CSV,111.6,0.0,0.0,0.0,0.0,0.95,etl worker failed
+Amazon Reviews JSON,79.0,1.0,0.0,0.1,0.0,0.92,plan applied correctly
+Flight Routes JSON,90.1,0.99,0.0,0.0,0.2,0.94,plan applied correctly
+News Categories JSON,76.2,0.99,0.0,0.5,0.0,0.90,plan applied correctly
+Recipes JSON,88.9,0.0,0.0,0.0,0.0,0.95,etl worker failed
+Social Media Posts JSON,76.1,0.98,0.0,1.7,6.7,0.88,plan applied correctly
+Student Grades JSON,106.1,0.0,0.0,0.0,0.0,0.90,etl worker failed

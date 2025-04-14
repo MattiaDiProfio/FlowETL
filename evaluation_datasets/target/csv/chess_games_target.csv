@@ -1,0 +1,6 @@
+game_id,is_rated,start_time,end_time,turns_taken,victory_status,winner,w_id,w_rating,b_id,b_rating,moves_sequence,opening_strategy_name
+TZJHLljE,0,1.50421E+12,1.50421E+12,13,outoftime,w,bourgris,1500,a-00,1191,d4-d5-c4-c6-cxd5-e6-dxe6-fxe6-Nf3-Bb4+-Nc3-Ba5-Bf4,Slav Defense: Exchange Variation
+l1NXvwaE,1,1.50413E+12,1.50413E+12,16,resign,b,a-00,1322,skinnerua,1261,d4-Nc6-e4-e5-f4-f6-dxe5-fxe5-fxe5-Nxe5-Qd4-Nc6-Qe5+-Nxe5,Nimzowitsch Defense: Kennedy Variation
+mIICvQHh,1,1.50413E+12,1.50413E+12,61,mate,w,ischia,1496,a-00,1500,e4-e5-d3-d6-Be3-c6-Be2-b5-Nd2-a5-a4-c5-axb5-Nc6-bxc6-Ra6-Nc4,King's Pawn Game: Leonardis Variation
+kWKvrqYL,1,1.50411E+12,1.50411E+12,61,mate,w,daniamurashov,1439,adivanov2009,1454,d4-d5-Nf3-Bf5-Nc3-Nf6-Bf4-Ng4-e3-Nc6-Be2-Qd7-O-O-O-O-O-Nb5-Nb4,Queen's Pawn Game: Zukertort Variation
+MsoDV9wj,0,1.50424E+12,1.50424E+12,5,draw,draw,trelynn17,1250,franklin14532,1002,e4-c5-Nf3-Qa5-a3,Sicilian Defense: Mongoose Variation

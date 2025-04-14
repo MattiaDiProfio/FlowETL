@@ -1,6 +1,0 @@
-film_id,film_name,watch_rating,cinema_score,released_date,run_time_minutes,budget_millions,total_box_office,rotten_tomatoes_score,rotten_tomatoes_counts_millions,metacritic_score,metacritic_counts_millions,imdb_score,imdb_counts_millions
-1,Toy Story,G,A,1995-November-22,81,30,394436586,100,96,95,26,8.3,1089.101
-3,Toy Story 2,G,A+,1999-November-24,92,90,511358276,100,172,88,34,7.9,630.573
-4,"Monsters, Inc.",G,A+,2001-November-02,92,115,528773250,96,199,79,35,8.1,1000.657
-22,Onward,PG,A-,2020-March-06,102,175,141940042,88,350,64,56,7.4,174.917
-23,Soul,PG,NA,2020-December-25,100,150,121903885,95,360,83,55,8,392.783

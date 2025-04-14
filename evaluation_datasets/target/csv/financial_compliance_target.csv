@@ -1,0 +1,6 @@
+year,firm_name,total_audit_engagement,high_risk_cases_count,compliance_violations_count,fraud_cases_count,industry_affected,revenue_impact_millions,ai_used,employee_workload_percent,audit_impact_score,client_satisfaction_score,overall_score
+2024,Deloitte,1581,247,181,72,Retail,221.42,0,56,5.6,7.9,6.75
+2025,Deloitte,760,406,65,69,Finance,140.29,1,40,5.1,7.5,6.3
+2023,PwC,2238,101,184,79,Retail,216.84,1,65,7.0,7.1,7.05
+2024,Ernst & Young,1760,415,183,11,Healthcare,291.0,1,53,8.2,8.4,8.3
+2024,PwC,4103,423,179,30,Healthcare,225.42,1,41,6.7,5.0,5.85
