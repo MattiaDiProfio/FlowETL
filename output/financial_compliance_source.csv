@@ -1,6 +1,0 @@
-year,firm_name,total_audit_engagement,high_risk_cases_count,compliance_violations_count,fraud_cases_count,industry_affected,revenue_impact_millions,ai_used,employee_workload_percent,audit_impact_score,client_satisfaction_score,overall_score
-2024,Ernst & Young,1404,188,147,64,Tech,199.39,0,68,5.9,6.7,6.3
-2025,Ernst & Young,3406,58,179,96,Tech,177.33,1,60,6.5,7.3,6.9
-2025,PwC,1808,470,164,16,Healthcare,176.0,0,63,6.7,6.2,6.45
-2023,KPMG,1838,75,86,19,Retail,190.97,1,38,7.5,7.1,7.3
-2024,PwC,4103,0.0,0.0,0.0,Healthcare,225.42,1,40.0,6.7,5.0,5.85
