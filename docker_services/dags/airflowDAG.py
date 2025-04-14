@@ -175,6 +175,7 @@ def infer_transformation_logic(ti):
     - Handle numeric operations carefully: convert strings to float before using them
     - If a value is in the form "A|B", you may use both components for derived values
     - Assume column renaming and reordering is already done
+    - Be named exactly `transform_table` since there are some other processes which expect this name
 
     Special mapping rules:
     - `("col1", "col2") -> ("new_col",)` means you should merge these two columns into one
