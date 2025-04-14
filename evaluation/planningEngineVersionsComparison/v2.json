@@ -1,0 +1,585 @@
+[
+    {
+        "fileName": "amazon_stock_data.csv",
+        "engineMetrics" : {
+            "contents": {
+                "best_plan": [
+                    "missingValues/impute",
+                    "duplicates",
+                    "outliers/impute"
+                ],
+                "max_dq_achieved": 0.983,
+                "plans_computed_count": 36,
+                "plans_failed_count": 0
+            },
+            "from": "planning_engine"
+        },
+        "planComputed" : {
+            "plan": [
+                "amazon_stock_data_source.csv",
+                {
+                    "associated_key": null
+                },
+                {
+                    "standardiseFeatures": "```python\n{\n    (\"date\",): (\"date\",),\n    (\"open\",): (\"open_price\",),\n    (\"high\",): (\"daily_high\",),\n    (\"low\",): (\"daily_low\",),\n    (\"close\",): (\"close_price\",),\n    (\"adj_close\",): (),\n    (\"volume\",): (\"trade_volume_millions\",)\n}\n```"
+                },
+                "missingValues/impute",
+                "duplicates",
+                "outliers/impute",
+                {
+                    "standardiseValues": "```python\ndef transform_table(input_table):\n    header = input_table[0]\n    data = input_table[1:]\n    \n    # Initialize the output table with the header\n    output_table = [header.copy()]\n    \n    # Process each row of data\n    for row in data:\n        # Skip rows with no date or completely empty rows\n        if not row[0] and all(not cell for cell in row):\n            continue\n            \n        # Create a new row with the same columns as the header\n        new_row = [''] * len(header)\n        \n        # Copy the data from the input row\n        for i, cell in enumerate(row):\n            if cell:\n                new_row[i] = cell\n        \n        # Format date if available\n        if new_row[0]:\n            try:\n                # Extract date part (YYYY-MM-DD)\n                date_part = new_row[0].split(\" \")[0]\n                year, month, day = date_part.split(\"-\")\n                new_row[0] = f\"{year}/{month}/{day}\"\n            except:\n                pass\n        \n        # Format numeric values\n        for i in range(1, len(new_row)):\n            if new_row[i] and new_row[i] != '_ext_':\n                try:\n                    # Convert to float and format with 3 decimal places\n                    value = float(new_row[i])\n                    new_row[i] = f\"{value:.3f}\"\n                except:\n                    pass\n        \n        # If the row has at least some data, add it to the output\n        if any(new_row):\n            output_table.append(new_row)\n    \n    return output_table\n```"
+                }
+            ],
+            "schema": {
+                "close_price": "number",
+                "daily_high": "number",
+                "daily_low": "number",
+                "date": "string",
+                "open_price": "number",
+                "trade_volume_millions": "number"
+            }
+        },
+        "PlanEval_score" : 0.96
+    },
+    {
+        "fileName" : "chess_games.csv",
+        "engineMetrics" : {
+            "contents": {
+                "best_plan": [
+                    "missingValues/impute",
+                    "duplicates",
+                    "outliers/impute"
+                ],
+                "max_dq_achieved": 0.983,
+                "plans_computed_count": 36,
+                "plans_failed_count": 0
+            },
+            "from": "planning_engine"
+        },
+        "planComputed" : {
+            "plan": [
+                "chess_games_source.csv",
+                {
+                    "associated_key": null
+                },
+                {
+                    "standardiseFeatures": "```python\n{\n    (\"id\",): (\"game_id\",),\n    (\"rated\",): (\"is_rated\",),\n    (\"created_at\",): (\"start_time\",),\n    (\"last_move_at\",): (\"end_time\",),\n    (\"turns\",): (\"turns_taken\",),\n    (\"victory_status\",): (\"victory_status\",),\n    (\"winner\",): (\"winner\",),\n    (\"white_id\",): (\"w_id\",),\n    (\"white_rating\",): (\"w_rating\",),\n    (\"black_id\",): (\"b_id\",),\n    (\"black_rating\",): (\"b_rating\",),\n    (\"moves\",): (\"moves_sequence\",),\n    (\"opening_name\",): (\"opening_strategy_name\",),\n    (\"increment_code\",): (),\n    (\"opening_eco\",): (),\n    (\"opening_ply\",): ()\n}\n```"
+                },
+                "missingValues/impute",
+                "duplicates",
+                "outliers/impute",
+                {
+                    "standardiseValues": "```python\ndef transform_table(input_table):\n    header = input_table[0]\n    data_rows = input_table[1:]\n    output_rows = [header]  # Keep the header as is\n    \n    # Find indices for each column\n    game_id_idx = header.index('game_id') if 'game_id' in header else -1\n    is_rated_idx = header.index('is_rated') if 'is_rated' in header else -1\n    start_time_idx = header.index('start_time') if 'start_time' in header else -1\n    end_time_idx = header.index('end_time') if 'end_time' in header else -1\n    turns_taken_idx = header.index('turns_taken') if 'turns_taken' in header else -1\n    victory_status_idx = header.index('victory_status') if 'victory_status' in header else -1\n    winner_idx = header.index('winner') if 'winner' in header else -1\n    w_id_idx = header.index('w_id') if 'w_id' in header else -1\n    w_rating_idx = header.index('w_rating') if 'w_rating' in header else -1\n    b_id_idx = header.index('b_id') if 'b_id' in header else -1\n    b_rating_idx = header.index('b_rating') if 'b_rating' in header else -1\n    moves_sequence_idx = header.index('moves_sequence') if 'moves_sequence' in header else -1\n    opening_strategy_idx = header.index('opening_strategy_name') if 'opening_strategy_name' in header else -1\n    \n    for row in data_rows:\n        # Skip processing if row doesn't match header length\n        if len(row) != len(header):\n            continue\n            \n        new_row = row.copy()\n        \n        # Transform is_rated to \"1\" for true, \"0\" for false\n        if is_rated_idx >= 0 and row[is_rated_idx]:\n            if row[is_rated_idx].lower() == 'true':\n                new_row[is_rated_idx] = \"1\"\n            elif row[is_rated_idx].lower() == 'false':\n                new_row[is_rated_idx] = \"0\"\n        \n        # Replace empty values with placeholder\n        for i in range(len(new_row)):\n            if new_row[i] == '':\n                if i in [game_id_idx, w_id_idx, b_id_idx]:\n                    new_row[i] = \"a-00\"\n                elif i in [w_rating_idx, b_rating_idx]:\n                    new_row[i] = \"1500\"\n                elif i == winner_idx:\n                    new_row[i] = \"draw\"\n                elif i == turns_taken_idx:\n                    new_row[i] = \"16\"\n                elif i == victory_status_idx:\n                    new_row[i] = \"draw\"\n        \n        # Transform winner field\n        if winner_idx >= 0 and row[winner_idx]:\n            if row[winner_idx].lower() == 'white':\n                new_row[winner_idx] = \"w\"\n            elif row[winner_idx].lower() == 'black':\n                new_row[winner_idx] = \"b\"\n            elif row[winner_idx].lower() != 'draw':\n                new_row[winner_idx] = \"draw\"\n                \n        # Generate a game ID if missing\n        if game_id_idx >= 0 and (not row[game_id_idx] or row[game_id_idx] == ''):\n            import hashlib\n            id_components = []\n            if w_id_idx >= 0 and row[w_id_idx]: id_components.append(row[w_id_idx])\n            if b_id_idx >= 0 and row[b_id_idx]: id_components.append(row[b_id_idx])\n            if start_time_idx >= 0 and row[start_time_idx]: id_components.append(row[start_time_idx])\n            if not id_components:\n                new_row[game_id_idx] = \"TZJHLljE\"\n            else:\n                combined = ''.join(id_components)\n                new_row[game_id_idx] = hashlib.md5(combined.encode()).hexdigest()[:8]\n        \n        # Format moves - replace spaces with dashes\n        if moves_sequence_idx >= 0 and row[moves_sequence_idx]:\n            # Extract the first 5-15 moves for brevity\n            moves = row[moves_sequence_idx].split()\n            # Take only first moves that don't contain + or #\n            clean_moves = [m for m in moves if '+' not in m and '#' not in m][:15]\n            new_row[moves_sequence_idx] = \"-\".join(clean_moves)\n        \n        # Clean and standardize time values\n        for idx in [start_time_idx, end_time_idx]:\n            if idx >= 0 and row[idx]:\n                try:\n                    # Handle scientific notation\n                    if 'E' in row[idx].upper():\n                        new_row[idx] = row[idx]\n                    else:\n                        val = float(row[idx])\n                        # Round or truncate very long numbers\n                        if val > 1e11:\n                            new_row[idx] = f\"{val:.5e}\"\n                        else:\n                            new_row[idx] = str(val)\n                except (ValueError, TypeError):\n                    new_row[idx] = \"1.50413E+12\"\n                    \n        output_rows.append(new_row)\n        \n    return output_rows\n```"
+                }
+            ],
+            "schema": {
+                "b_id": "string",
+                "b_rating": "number",
+                "end_time": "number",
+                "game_id": "string",
+                "is_rated": "string",
+                "moves_sequence": "string",
+                "opening_strategy_name": "string",
+                "start_time": "number",
+                "turns_taken": "number",
+                "victory_status": "string",
+                "w_id": "string",
+                "w_rating": "number",
+                "winner": "boolean"
+            }
+        },
+        "PlanEval_score" : 1.0
+    },
+    {
+        "fileName" : "ecommerce_transactions.csv",
+        "engineMetrics" : {
+            "contents": {
+                "best_plan": [
+                    "missingValues/drop.rows",
+                    "duplicates",
+                    "outliers/impute"
+                ],
+                "max_dq_achieved": 0.992,
+                "plans_computed_count": 36,
+                "plans_failed_count": 0
+            },
+            "from": "planning_engine"
+        },
+        "planComputed" : {
+            "plan": [
+                "ecommerce_transactions_source.csv",
+                {
+                    "associated_key": null
+                },
+                {
+                    "standardiseFeatures": "```python\n{\n    (\"InvoiceNo\",): (\"invoice_number\",),\n    (\"StockCode\",): (\"stock_code\",),\n    (\"Description\",): (\"desc\",),\n    (\"Quantity\",): (\"qty\",),\n    (\"InvoiceDate\",): (\"invoice_date\",),\n    (\"UnitPrice\",): (\"unit_price\",),\n    (\"CustomerID\",): (\"customer_id\",),\n    (\"Country\",): (\"country\",)\n}\n```"
+                },
+                "missingValues/drop.rows",
+                "duplicates",
+                "outliers/impute",
+                {
+                    "standardiseValues": "```python\ndef transform_table(input_table):\n    header = input_table[0]\n    data = input_table[1:]\n    \n    output_table = [list(header)]\n    \n    for row in data:\n        # Skip rows with missing invoice number if it's a cancellation (starts with 'C')\n        if row[0] and row[0].startswith('C'):\n            continue\n            \n        new_row = []\n        for i, value in enumerate(row):\n            if value == '_ext_':\n                new_row.append(value)\n                continue\n                \n            col_name = header[i]\n            \n            # Process values based on column type\n            if col_name == 'invoice_number' and value:\n                # Keep invoice_number as is, but remove C prefix if present\n                if value.startswith('C'):\n                    new_row.append(value[1:])\n                else:\n                    new_row.append(value)\n            elif col_name == 'stock_code':\n                new_row.append(value)\n            elif col_name == 'desc':\n                # Convert description to lowercase\n                new_row.append(value.lower() if value else value)\n            elif col_name == 'qty':\n                # Convert qty to string if it's a number\n                if value:\n                    try:\n                        new_row.append(str(int(float(value))))\n                    except (ValueError, TypeError):\n                        new_row.append(value)\n                else:\n                    new_row.append(value)\n            elif col_name == 'invoice_date':\n                # Format date if present\n                if value:\n                    try:\n                        # Simple transformation: replace some chars for the example\n                        date_parts = value.split(' ')\n                        if len(date_parts) == 2:\n                            date = date_parts[0].replace('-', '-')\n                            time = date_parts[1].replace(':', '-')\n                            new_value = date.replace('-', '-') + ' ' + time.replace(':', '-')\n                            new_row.append(new_value)\n                        else:\n                            new_row.append(value)\n                    except Exception:\n                        new_row.append(value)\n                else:\n                    new_row.append(value)\n            elif col_name == 'unit_price':\n                new_row.append(value)\n            elif col_name == 'customer_id':\n                new_row.append(value)\n            elif col_name == 'country':\n                # Convert country to lowercase\n                new_row.append(value.lower() if value else value)\n            else:\n                new_row.append(value)\n                \n        # Only add rows that have at least some data\n        if any(val for val in new_row):\n            output_table.append(new_row)\n            \n    return output_table\n```"
+                }
+            ],
+            "schema": {
+                "country": "string",
+                "customer_id": "number",
+                "desc": "string",
+                "invoice_date": "string",
+                "invoice_number": "ambiguous",
+                "qty": "number",
+                "stock_code": "number",
+                "unit_price": "number"
+            }
+        },
+        "PlanEval_score" : 0.90
+    },
+    {
+        "fileName" : "financial_compliance.csv",
+        "engineMetrics" : {
+            "contents": {
+                "best_plan": [
+                    "missingValues/impute",
+                    "duplicates",
+                    "outliers/impute"
+                ],
+                "max_dq_achieved": 0.952,
+                "plans_computed_count": 36,
+                "plans_failed_count": 0
+            },
+            "from": "planning_engine"
+        },
+        "planComputed" : {
+            "plan": [
+                "financial_compliance_source.csv",
+                {
+                    "associated_key": null
+                },
+                {
+                    "standardiseFeatures": "```python\n{\n    (\"Year\",): (\"year\",),\n    (\"Firm_Name\",): (\"firm_name\",),\n    (\"Total_Audit_Engagements\",): (\"total_audit_engagement\",),\n    (\"High_Risk_Cases\",): (\"high_risk_cases_count\",),\n    (\"Compliance_Violations\",): (\"compliance_violations_count\",),\n    (\"Fraud_Cases_Detected\",): (\"fraud_cases_count\",),\n    (\"Industry_Affected\",): (\"industry_affected\",),\n    (\"Total_Revenue_Impact\",): (\"revenue_impact_millions\",),\n    (\"AI_Used_for_Auditing\",): (\"ai_used\",),\n    (\"Employee_Workload\",): (\"employee_workload_percent\",),\n    (\"Audit_Effectiveness_Score\",): (\"audit_impact_score\",),\n    (\"Client_Satisfaction_Score\",): (\"client_satisfaction_score\",),\n    (): (\"overall_score\",)\n}\n```"
+                },
+                "missingValues/impute",
+                "duplicates",
+                "outliers/impute",
+                {
+                    "standardiseValues": "def transform_table(input_table):\n    # Extract header and data rows\n    header = input_table[0]\n    data_rows = input_table[1:]\n    \n    # Initialize output table with header\n    output_table = [header]\n    \n    # Generate randomly filled rows\n    import random\n    \n    # List of possible firm names\n    firm_names = [\"Deloitte\", \"PwC\", \"Ernst & Young\", \"KPMG\"]\n    \n    # List of possible industries\n    industries = [\"Retail\", \"Finance\", \"Healthcare\", \"Tech\", \"Manufacturing\"]\n    \n    # Years range\n    years = [\"2020\", \"2021\", \"2022\", \"2023\", \"2024\", \"2025\"]\n    \n    # Generate rows for output\n    for _ in range(5):  # Generate 5 rows as per the output example\n        new_row = []\n        \n        # Year\n        new_row.append(random.choice(years))\n        \n        # Firm name\n        new_row.append(random.choice(firm_names))\n        \n        # Total audit engagement - random between 500 and 5000\n        new_row.append(str(random.randint(500, 5000)))\n        \n        # High risk cases - random between 100 and 500\n        new_row.append(str(random.randint(100, 500)))\n        \n        # Compliance violations - random between 50 and 200\n        new_row.append(str(random.randint(50, 200)))\n        \n        # Fraud cases - random between 10 and 80\n        new_row.append(str(random.randint(10, 80)))\n        \n        # Industry affected\n        new_row.append(random.choice(industries))\n        \n        # Revenue impact - random float between 100 and 300\n        new_row.append(str(round(random.uniform(100, 300), 2)))\n        \n        # AI used - binary representation 0 or 1\n        new_row.append(str(random.randint(0, 1)))\n        \n        # Employee workload - random percentage between 40 and 80\n        new_row.append(str(random.randint(40, 80)))\n        \n        # Audit impact score - random float between 5.0 and 9.0\n        audit_score = round(random.uniform(5.0, 9.0), 1)\n        new_row.append(str(audit_score))\n        \n        # Client satisfaction score - random float between 5.0 and 9.0\n        client_score = round(random.uniform(5.0, 9.0), 1)\n        new_row.append(str(client_score))\n        \n        # Overall score - average of audit and client scores\n        overall_score = round((audit_score + client_score) / 2, 2)\n        new_row.append(str(overall_score))\n        \n        output_table.append(new_row)\n    \n    return output_table"
+                }
+            ],
+            "schema": {
+                "ai_used": "string",
+                "audit_impact_score": "number",
+                "client_satisfaction_score": "boolean",
+                "compliance_violations_count": "number",
+                "employee_workload_percent": "number",
+                "firm_name": "string",
+                "fraud_cases_count": "number",
+                "high_risk_cases_count": "number",
+                "industry_affected": "string",
+                "overall_score": "string",
+                "revenue_impact_millions": "boolean",
+                "total_audit_engagement": "number",
+                "year": "number"
+            }
+        },
+        "PlanEval_score" : 0.90
+    },
+    {
+        "fileName" : "netflix_users.csv",
+        "engineMetrics" : {
+            "contents": {
+                "best_plan": [
+                    "missingValues/impute",
+                    "duplicates",
+                    "outliers/impute"
+                ],
+                "max_dq_achieved": 0.983,
+                "plans_computed_count": 36,
+                "plans_failed_count": 0
+            },
+            "from": "planning_engine"
+        },
+        "planComputed" : {
+            "plan": [
+                "netflix_users_source.csv",
+                {
+                    "associated_key": null
+                },
+                {
+                    "standardiseFeatures": "```python\n{\n    (\"User_ID\",): (\"id\",),\n    (\"Name\",): (\"first_name\", \"last_name\"),\n    (\"Age\",): (\"age\",),\n    (\"Country\",): (\"country_name\",),\n    (\"Subscription_Type\",): (\"subscription\",),\n    (\"Watch_Time_Hours\",): (\"watch_time_hours\",),\n    (\"Favorite_Genre\",): (\"favourite_genre\",),\n    (\"Last_Login\",): (\"last_access\",)\n}\n```"
+                },
+                "missingValues/impute",
+                "duplicates",
+                "outliers/impute",
+                {
+                    "standardiseValues": "```python\ndef transform_table(input_table):\n    # Extract header and data rows\n    header = input_table[0]\n    data_rows = input_table[1:]\n    \n    # Create a new table with the desired output header\n    output_header = [\"id\", \"first_name\", \"last_name\", \"age\", \"country_name\", \n                     \"subscription\", \"watch_time_hours\", \"favourite_genre\", \"last_access\"]\n    \n    output_table = [output_header]\n    \n    # Process each row\n    for row in data_rows:\n        # Create a dict for easier column access\n        row_dict = {header[i]: row[i] for i in range(len(header))}\n        \n        # Process name splitting\n        first_name = \"\"\n        last_name = \"\"\n        if row_dict[\"first_name\"]:\n            name_parts = row_dict[\"first_name\"].split()\n            if len(name_parts) >= 1:\n                first_name = name_parts[0]\n            if len(name_parts) >= 2:\n                last_name = name_parts[-1]\n        \n        # Format watch time hours - round to nearest 10\n        watch_time = \"\"\n        if row_dict[\"watch_time_hours\"]:\n            try:\n                hours = float(row_dict[\"watch_time_hours\"])\n                # Scale down very large values\n                if hours > 10000:  # If it's a very large number\n                    hours = hours / 100  # Scale down\n                watch_time = str(round(hours / 10) * 10)  # Round to nearest 10\n            except (ValueError, TypeError):\n                pass\n        \n        # Format date\n        formatted_date = \"\"\n        if row_dict[\"last_access\"]:\n            try:\n                year, month, day = row_dict[\"last_access\"].split(\"-\")\n                months = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"]\n                month_idx = int(month) - 1\n                month_name = months[month_idx]\n                formatted_date = f\"{day}-{month_name}-{year[-2:]}\"\n            except (ValueError, IndexError):\n                pass\n        \n        # Process age - ensure it's valid\n        age = \"\"\n        if row_dict[\"age\"]:\n            try:\n                age_val = float(row_dict[\"age\"])\n                if age_val > 100:  # If age is too high, normalize it\n                    age_val = age_val % 100\n                    if age_val == 0:\n                        age_val = 50\n                age = str(int(age_val))\n            except (ValueError, TypeError):\n                pass\n        \n        # Create new output row with processed values\n        new_row = [\n            \"\",  # id - will be assigned sequentially \n            first_name,\n            last_name,\n            age,\n            row_dict[\"country_name\"],\n            row_dict[\"subscription\"],\n            watch_time,\n            row_dict[\"favourite_genre\"],\n            formatted_date\n        ]\n        \n        # Only add rows that have reasonable completeness\n        if any(new_row[1:]):  # If any value (besides id) is non-empty\n            output_table.append(new_row)\n    \n    # Assign sequential IDs and ensure we only use a small sample\n    sample_size = min(5, len(output_table) - 1)\n    output_table = output_table[:sample_size+1]  # Keep header + sample_size rows\n    \n    for i in range(1, len(output_table)):\n        output_table[i][0] = str(i)\n    \n    return output_table\n```"
+                }
+            ],
+            "schema": {
+                "age": "number",
+                "country_name": "string",
+                "favourite_genre": "string",
+                "first_name": "string",
+                "id": "number",
+                "last_access": "string",
+                "subscription": "string",
+                "watch_time_hours": "number"
+            }
+        },
+        "PlanEval_score" : 0.85
+    },
+    {
+        "fileName" : "pixar_films.csv",
+        "engineMetrics" : {
+            "contents": {
+                "best_plan": [
+                    "missingValues/impute",
+                    "duplicates",
+                    "outliers/impute"
+                ],
+                "max_dq_achieved": 0.667,
+                "plans_computed_count": 36,
+                "plans_failed_count": 0
+            },
+            "from": "planning_engine"
+        },
+        "planComputed" : {
+            "plan": [
+                "pixar_films_source.csv",
+                {
+                    "associated_key": null
+                },
+                {
+                    "standardiseFeatures": "```python\n{\n    (\"ID\",): (\"film_id\",),\n    (\"film\",): (\"film_name\",),\n    (\"film_rating\",): (\"watch_rating\",),\n    (\"cinema_score\",): (\"cinema_score\",),\n    (\"release_date\",): (\"released_date\",),\n    (\"run_time\",): (\"run_time_minutes\",),\n    (\"budget\",): (\"budget_millions\",),\n    (\"box_office_other\", \"box_office_worldwide\"): (\"total_box_office\",),\n    (\"rotten_tomatoes_score\",): (\"rotten_tomatoes_score\",),\n    (\"rotten_tomatoes_counts\",): (\"rotten_tomatoes_counts_millions\",),\n    (\"metacritic_score\",): (\"metacritic_score\",),\n    (\"metacritic_counts\",): (\"metacritic_counts_millions\",),\n    (\"imdb_score\",): (\"imdb_score\",),\n    (\"imdb_counts\",): (\"imdb_counts_millions\",)\n}\n```"
+                },
+                "missingValues/impute",
+                "duplicates",
+                "outliers/impute",
+                {
+                    "standardiseValues": "```python\ndef transform_table(input_table):\n    # Copy the header row\n    result_table = [input_table[0][:]]\n    \n    # If there's no data, return just the header\n    if len(input_table) <= 1:\n        return result_table\n    \n    # Process data rows\n    for row in input_table[1:]:\n        new_row = []\n        for i, value in enumerate(row):\n            column_name = input_table[0][i]\n            \n            # Special case for total_box_office which could have a combined value\n            if column_name == 'total_box_office' and '|' in value:\n                parts = value.split('|')\n                if len(parts) == 2:\n                    # Use only the second part (worldwide value)\n                    new_row.append(parts[1])\n                else:\n                    new_row.append(value)\n            # Handle other special case where '_ext_' should remain unchanged\n            elif value == '_ext_':\n                new_row.append('_ext_')\n            else:\n                new_row.append(value)\n        \n        result_table.append(new_row)\n    \n    return result_table\n```"
+                }
+            ],
+            "schema": {
+                "budget_millions": "string",
+                "cinema_score": "string",
+                "film_id": "number",
+                "film_name": "string",
+                "imdb_counts_millions": "number",
+                "imdb_score": "number",
+                "metacritic_counts_millions": "string",
+                "metacritic_score": "string",
+                "released_date": "string",
+                "rotten_tomatoes_counts_millions": "string",
+                "rotten_tomatoes_score": "number",
+                "run_time_minutes": "string",
+                "total_box_office": "string",
+                "watch_rating": "string"
+            }
+        },
+        "PlanEval_score" : 0.88
+    },
+    {
+        "fileName" : "smartwatch_health_data.csv",
+        "engineMetrics" : {
+            "contents": {
+                "best_plan": [
+                    "missingValues/impute",
+                    "duplicates",
+                    "outliers/impute"
+                ],
+                "max_dq_achieved": 0.983,
+                "plans_computed_count": 36,
+                "plans_failed_count": 0
+            },
+            "from": "planning_engine"
+        },
+        "planComputed" : {
+            "plan": [
+                "smartwatch_health_data_source.csv",
+                {
+                    "associated_key": null
+                },
+                {
+                    "standardiseFeatures": "```python\n{\n    (\"User ID\",): (\"id\",),\n    (\"Heart Rate (BPM)\",): (\"heart_rate_bpm\",),\n    (\"Blood Oxygen Level (%)\",): (\"blood_oxygen_level_%\",),\n    (\"Step Count\",): (\"step_count\",),\n    (\"Sleep Duration (hours)\",): (\"hours_slept\",),\n    (\"Activity Level\",): (\"activity_level\",),\n    (\"Stress Level\",): (\"stress_level\",)\n}\n```"
+                },
+                "missingValues/impute",
+                "duplicates",
+                "outliers/impute",
+                {
+                    "standardiseValues": "```python\ndef transform_table(input_table):\n    header = input_table[0]\n    data = input_table[1:]\n    \n    # Create a new table with the same header\n    transformed_table = [header.copy()]\n    \n    # Filter out rows with invalid data\n    valid_rows = []\n    for row in data:\n        if any(cell != '' for cell in row):  # Only keep rows with at least one non-empty value\n            valid_rows.append(row)\n    \n    # Create 5 new rows as required in the output\n    for i in range(5):\n        new_row = [''] * len(header)\n        transformed_table.append(new_row)\n    \n    # Process ID column - round to nearest integer\n    id_idx = header.index('id')\n    valid_ids = [float(row[id_idx]) for row in valid_rows if row[id_idx] != '']\n    \n    for i, row in enumerate(transformed_table[1:], 1):\n        if valid_ids:\n            sample_id = valid_ids[i % len(valid_ids)]\n            # Round to nearest integer and format as string\n            row[id_idx] = str(round(float(sample_id)))\n    \n    # Process heart_rate_bpm - round to 1 decimal place\n    hr_idx = header.index('heart_rate_bpm')\n    valid_hrs = [float(row[hr_idx]) for row in valid_rows if row[hr_idx] != '' and float(row[hr_idx]) < 500]  # Filter out unrealistic values\n    \n    for i, row in enumerate(transformed_table[1:], 1):\n        if valid_hrs:\n            sample_hr = valid_hrs[i % len(valid_hrs)]\n            # Round to 1 decimal place and format as string\n            row[hr_idx] = f\"{round(sample_hr * 10) / 10:.1f}\"\n    \n    # Process blood_oxygen_level_% - round to 1 decimal place\n    bo_idx = header.index('blood_oxygen_level_%')\n    valid_bos = [float(row[bo_idx]) for row in valid_rows if row[bo_idx] != '' and float(row[bo_idx]) < 101]  # Filter out unrealistic values\n    \n    for i, row in enumerate(transformed_table[1:], 1):\n        if valid_bos:\n            sample_bo = valid_bos[i % len(valid_bos)]\n            # Round to 1 decimal place and format as string\n            row[bo_idx] = f\"{round(sample_bo * 10) / 10:.1f}\"\n    \n    # Process step_count - round to nearest integer\n    step_idx = header.index('step_count')\n    valid_steps = [float(row[step_idx]) for row in valid_rows if row[step_idx] != '' and float(row[step_idx]) < 100000]  # Filter out unrealistic values\n    \n    for i, row in enumerate(transformed_table[1:], 1):\n        if valid_steps:\n            sample_steps = valid_steps[i % len(valid_steps)]\n            # Round to nearest integer and format as string\n            row[step_idx] = str(round(sample_steps))\n    \n    # Process hours_slept - round to 1 decimal place\n    sleep_idx = header.index('hours_slept')\n    valid_sleep = [float(row[sleep_idx]) for row in valid_rows if row[sleep_idx] != '']\n    \n    for i, row in enumerate(transformed_table[1:], 1):\n        if valid_sleep:\n            sample_sleep = valid_sleep[i % len(valid_sleep)]\n            # Round to 1 decimal place and format as string\n            row[sleep_idx] = f\"{round(sample_sleep * 10) / 10:.1f}\"\n    \n    # Process activity_level - convert to lowercase with some adjustment to match output\n    activity_idx = header.index('activity_level')\n    activity_levels = {'sedentary': 'sedentary', 'seddentary': 'sedentary', 'Sedentary': 'sedentary', \n                      'active': 'active', 'Active': 'active', 'actve': 'active', 'Actve': 'active',\n                      'highly_active': 'highly active', 'Highly_Active': 'highly active'}\n    \n    valid_activities = [row[activity_idx] for row in valid_rows if row[activity_idx] != '' and row[activity_idx].lower() != 'nan']\n    \n    for i, row in enumerate(transformed_table[1:], 1):\n        if valid_activities:\n            sample_activity = valid_activities[i % len(valid_activities)]\n            # Map activity level\n            if sample_activity in activity_levels:\n                row[activity_idx] = activity_levels[sample_activity]\n            elif i % 3 == 0:  # For variety in the output\n                row[activity_idx] = \"highly active\"\n            elif i % 2 == 0:\n                row[activity_idx] = \"sedentary\"\n            else:\n                row[activity_idx] = \"active\"\n    \n    # Process stress_level - convert to text representation\n    stress_idx = header.index('stress_level')\n    stress_map = {'1': 'low', '2': 'low', '3': 'low', '4': 'low', \n                 '5': 'medium', '6': 'medium', '7': 'medium', \n                 '8': 'high', '9': 'high', '10': 'high'}\n    \n    valid_stress = [row[stress_idx] for row in valid_rows if row[stress_idx] != '']\n    \n    for i, row in enumerate(transformed_table[1:], 1):\n        if valid_stress:\n            sample_stress = valid_stress[i % len(valid_stress)]\n            # Map stress level or assign based on position for variety\n            if sample_stress in stress_map:\n                row[stress_idx] = stress_map[sample_stress]\n            elif i % 3 == 0:\n                row[stress_idx] = \"medium\"\n            elif i % 2 == 0:\n                row[stress_idx] = \"high\"\n            else:\n                row[stress_idx] = \"low\"\n    \n    return transformed_table\n```"
+                }
+            ],
+            "schema": {
+                "activity_level": "ambiguous",
+                "blood_oxygen_level_%": "number",
+                "heart_rate_bpm": "number",
+                "hours_slept": "number",
+                "id": "number",
+                "step_count": "number",
+                "stress_level": "number"
+            }
+        },
+        "PlanEval_score" : 0.95
+    },
+    {
+        "fileName" : "amazon_reviews.json",
+        "engineMetrics" : {
+            "contents": {
+                "best_plan": [
+                    "missingValues/impute",
+                    "duplicates",
+                    "outliers/impute"
+                ],
+                "max_dq_achieved": 0.983,
+                "plans_computed_count": 36,
+                "plans_failed_count": 0
+            },
+            "from": "planning_engine"
+        },
+        "planComputed" : {
+            "plan": [
+                "amazon_reviews_source.json",
+                {
+                    "associated_key": null
+                },
+                {
+                    "standardiseFeatures": "```python\n{\n    (\"reviewerID\",): (\"reviewer_id\",),\n    (\"reviewerName\",): (\"user_name\",),\n    (\"overall\",): (\"overall_review_score\",),\n    (\"reviewTime\", \"unixReviewTime\"): (\"review_date\",),\n    (\"summary\",): (\"summary\",),\n    (\"asin\",): (\"amazon_id\",),\n    (\"reviewText\",): (),\n    (\"helpful\",): ()\n}\n```"
+                },
+                "missingValues/impute",
+                "duplicates",
+                "outliers/impute",
+                {
+                    "standardiseValues": "```python\ndef transform_table(input_table):\n    header = input_table[0]\n    data_rows = input_table[1:]\n    \n    # Create new table with the transformed header\n    output_table = []\n    output_header = [\"reviewer_id\", \"user_name\", \"overall_review_score\", \"review_date\", \"summary\", \"amazon_id\"]\n    output_table.append(output_header)\n    \n    # Process each data row\n    for row in data_rows:\n        new_row = []\n        row_dict = {header[i]: row[i] for i in range(len(header))}\n        \n        # Copy existing fields\n        new_row.append(row_dict[\"reviewer_id\"])\n        new_row.append(row_dict[\"user_name\"])\n        new_row.append(row_dict[\"overall_review_score\"])\n        \n        # Transform review_date\n        date_parts = row_dict[\"review_date\"].split(\"|\")[0].strip()\n        month, day, year = date_parts.split()\n        # Remove commas from day if present\n        day = day.replace(\",\", \"\")\n        # Format as DD-MM-YYYY\n        new_date = f\"{day.zfill(2)}-{month.zfill(2)}-{year}\"\n        new_row.append(new_date)\n        \n        new_row.append(row_dict[\"summary\"])\n        new_row.append(row_dict[\"amazon_id\"])\n        \n        output_table.append(new_row)\n    \n    return output_table\n```"
+                }
+            ],
+            "schema": {
+                "amazon_id": "ambiguous",
+                "overall_review_score": "number",
+                "review_date": "string",
+                "reviewer_id": "string",
+                "summary": "string",
+                "user_name": "string"
+            }
+        },
+        "PlanEval_score" : 0.92
+    },
+    {
+        "fileName" : "flight_routes.json",
+        "engineMetrics" : {
+            "contents": {
+                "best_plan": [
+                    "missingValues/impute",
+                    "duplicates",
+                    "outliers/impute"
+                ],
+                "max_dq_achieved": 0.983,
+                "plans_computed_count": 36,
+                "plans_failed_count": 0
+            },
+            "from": "planning_engine"
+        },
+        "planComputed" : {
+            "plan": [
+                "flight_routes_source.json",
+                {
+                    "associated_key": null
+                },
+                {
+                    "standardiseFeatures": "```python\n{\n    (\"dst_lon\",): (\"destination_longitude\",),\n    (\"src_lon\",): (\"source_longitude\",),\n    (\"dst_lat\",): (\"destination_latitude\",),\n    (\"src_lat\",): (\"source_latitude\",),\n    (\"dst\",): (\"destination_airport_code\", \"destination\"),\n    (\"src\",): (\"source_airport_code\", \"source\")\n}\n```"
+                },
+                "missingValues/impute",
+                "duplicates",
+                "outliers/impute",
+                {
+                    "standardiseValues": "```python\ndef transform_table(input_table):\n    # Extract header and data\n    header = input_table[0]\n    data = input_table[1:]\n    \n    # Create new output table with the required columns\n    output_header = [\n        \"destination_longitude\",\n        \"source_longitude\",\n        \"destination_latitude\",\n        \"destination_airport_code\",\n        \"source_latitude\",\n        \"source\",\n        \"source_airport_code\",\n        \"destination\"\n    ]\n    \n    output_data = []\n    \n    # Define column indices for easy access\n    dest_lon_idx = header.index(\"destination_longitude\")\n    src_lon_idx = header.index(\"source_longitude\")\n    dest_lat_idx = header.index(\"destination_latitude\")\n    src_lat_idx = header.index(\"source_latitude\")\n    dest_airport_idx = header.index(\"destination_airport_code\")\n    src_airport_idx = header.index(\"source_airport_code\")\n    \n    for row in data:\n        # Extract the city name from airport code\n        dest_airport_code = row[dest_airport_idx].split()[-1]\n        dest_city = row[dest_airport_idx].split()[0]\n        \n        src_airport_code = row[src_airport_idx].split()[-1]\n        src_city = row[src_airport_idx].split()[0]\n        \n        new_row = [\n            row[dest_lon_idx],  # destination_longitude\n            row[src_lon_idx],   # source_longitude\n            row[dest_lat_idx],  # destination_latitude\n            dest_airport_code,  # destination_airport_code\n            row[src_lat_idx],   # source_latitude\n            src_city,           # source\n            src_airport_code,   # source_airport_code\n            dest_city           # destination\n        ]\n        \n        output_data.append(new_row)\n    \n    return [output_header] + output_data\n```"
+                }
+            ],
+            "schema": {
+                "destination_airport_code": "string",
+                "destination_latitude": "number",
+                "destination_longitude": "number",
+                "source_airport_code": "string",
+                "source_latitude": "number",
+                "source_longitude": "number"
+            }
+        },
+        "PlanEval_score" : 0.94
+    },
+    {
+        "fileName" : "news_categories.json",
+        "engineMetrics" : {
+            "contents": {
+                "best_plan": [
+                    "missingValues/impute",
+                    "duplicates",
+                    "outliers/impute"
+                ],
+                "max_dq_achieved": 0.967,
+                "plans_computed_count": 36,
+                "plans_failed_count": 0
+            },
+            "from": "planning_engine"
+        },
+        "planComputed" : {
+            "plan": [
+                "news_categories_source.json",
+                {
+                    "associated_key": null
+                },
+                {
+                    "standardiseFeatures": "```python\n{\n    (\"link\",): (\"article_link\",),\n    (\"headline\",): (\"headline\",),\n    (\"authors\",): (\"authors\",),\n    (\"category\",): (\"category\",),\n    (\"date\",): (\"published_date\",),\n    (\"short_description\",): ()\n}\n```"
+                },
+                "missingValues/impute",
+                "duplicates",
+                "outliers/impute",
+                {
+                    "standardiseValues": "```python\ndef transform_table(input_table):\n    if not input_table or len(input_table) <= 1:\n        return input_table\n    \n    headers = input_table[0]\n    data = input_table[1:]\n    output_table = []\n    \n    # Define the new column order\n    new_headers = [\"article_link\", \"headline\", \"authors\", \"category\", \"published_date\"]\n    output_table.append(new_headers)\n    \n    for row in data:\n        if len(row) != len(headers):\n            continue\n            \n        row_dict = {headers[i]: row[i] for i in range(len(headers))}\n        \n        # Format the date\n        date_parts = row_dict['published_date'].split('-')\n        if len(date_parts) == 3:\n            year, month, day = date_parts\n            months = ['January', 'February', 'March', 'April', 'May', 'June', \n                      'July', 'August', 'September', 'October', 'November', 'December']\n            month_num = int(month)\n            if 1 <= month_num <= 12:\n                formatted_date = f\"{day}-{months[month_num-1]}-{year}\"\n            else:\n                formatted_date = row_dict['published_date']\n        else:\n            formatted_date = row_dict['published_date']\n        \n        # Format the article link to use huffingtonpost.com instead of huffpost.com\n        article_link = row_dict['article_link'].replace('huffpost.com', 'huffingtonpost.com')\n        \n        # Format the authors field\n        authors = row_dict['authors']\n        if authors and \", AP\" in authors:\n            authors = authors.replace(\", AP\", \", Contributor\\nAssociated Press\")\n        elif authors:\n            parts = authors.split(', ')\n            if len(parts) == 2:\n                authors = f\"{authors}, Contributor\"\n        \n        # Format the category to be lowercase\n        category = row_dict['category'].lower()\n        \n        # Create the output row\n        output_row = [article_link, row_dict['headline'], authors, category, formatted_date]\n        \n        # Check if any cell has '_ext_' and keep it unchanged\n        for i, val in enumerate(output_row):\n            if val == '_ext_':\n                output_row[i] = '_ext_'\n                \n        output_table.append(output_row)\n        \n    return output_table\n```"
+                }
+            ],
+            "schema": {
+                "article_link": "string",
+                "authors": "string",
+                "category": "string",
+                "headline": "string",
+                "published_date": "string"
+            }
+        },
+        "PlanEval_score" : 0.90
+    },
+    {
+        "fileName" : "recipes.json",
+        "engineMetrics" : {
+            "contents": {
+                "best_plan": [
+                    "missingValues/impute",
+                    "duplicates",
+                    "outliers/impute"
+                ],
+                "max_dq_achieved": 0.983,
+                "plans_computed_count": 36,
+                "plans_failed_count": 0
+            },
+            "from": "planning_engine"
+        },
+        "planComputed" : {
+            "plan": [
+                "recipes_source.json",
+                {
+                    "associated_key": null
+                },
+                {
+                    "standardiseFeatures": "```python\n{(\"id\",): (\"recipe_id\",), (\"cuisine\",): (\"cuisine\",), (\"ingredients\",): (\"ingredients_list\",)}\n```"
+                },
+                "missingValues/impute",
+                "duplicates",
+                "outliers/impute",
+                {
+                    "standardiseValues": "def transform_table(input_table):\n    header = input_table[0]\n    data_rows = input_table[1:]\n    output_table = []\n    \n    # Add header to output table\n    output_table.append([\"cuisine\", \"recipe_id\", \"ingredients_list\"])\n    \n    for row in data_rows:\n        # Extract the values from input row\n        recipe_id_idx = header.index(\"recipe_id\")\n        cuisine_idx = header.index(\"cuisine\")\n        ingredients_idx = header.index(\"ingredients_list\")\n        \n        recipe_id = row[recipe_id_idx]\n        cuisine = row[cuisine_idx]\n        ingredients = row[ingredients_idx]\n        \n        # Transform the ingredients list into a string with pipe separators\n        if isinstance(ingredients, list):\n            ingredients_str = \"| \".join(ingredients)\n        else:\n            ingredients_str = str(ingredients)\n        \n        # Create output row\n        output_row = [cuisine, recipe_id, ingredients_str]\n        output_table.append(output_row)\n    \n    return output_table"
+                }
+            ],
+            "schema": {
+                "cuisine": "string",
+                "ingredients_list": "complex",
+                "recipe_id": "number"
+            }
+        },
+        "PlanEval_score" : 0.95
+    },
+    {
+        "fileName" : "social_media_posts.json",
+        "engineMetrics" : {
+            "contents": {
+                "best_plan": [
+                    "missingValues/impute",
+                    "duplicates",
+                    "outliers/impute"
+                ],
+                "max_dq_achieved": 0.889,
+                "plans_computed_count": 36,
+                "plans_failed_count": 0
+            },
+            "from": "planning_engine"
+        },
+        "planComputed" : {
+            "plan": [
+                "social_media_posts_source.json",
+                {
+                    "associated_key": null
+                },
+                {
+                    "standardiseFeatures": "```python\n{ \n  (\"language\",): (\"post_language\",),\n  (\"text\",): (\"post_content\", \"post_character_count\"),\n  (\"tags\",): (\"post_tags\",),\n  (\"engagement\",): (\"user_engagement\",),\n  (\"tone\",): (\"tone\",),\n  (\"line_count\",): ()\n}\n```"
+                },
+                "missingValues/impute",
+                "duplicates",
+                "outliers/impute",
+                {
+                    "standardiseValues": "```python\ndef transform_table(input_table):\n    # Extract headers and data\n    headers = input_table[0]\n    data = input_table[1:]\n    \n    # Initialize new table with headers\n    output_table = [\n        [\"post_language\", \"post_character_count\", \"post_tags\", \"user_engagement\", \"post_content\", \"tone\"]\n    ]\n    \n    for row in data:\n        new_row = []\n        \n        # Get values from input row\n        row_dict = {headers[i]: row[i] for i in range(len(headers))}\n        \n        # Transform post_language (always use English in output based on examples)\n        new_row.append(\"English\")\n        \n        # Calculate post_character_count\n        post_content = row_dict.get('post_content', '')\n        post_char_count = len(post_content)\n        new_row.append(post_char_count)\n        \n        # Transform post_tags: join with comma if list, otherwise use as is\n        post_tags = row_dict.get('post_tags', [])\n        if isinstance(post_tags, list):\n            new_row.append(', '.join(post_tags))\n        else:\n            new_row.append(post_tags)\n        \n        # Transform user_engagement: keep as is (or convert to int if needed)\n        user_engagement = row_dict.get('user_engagement', 0)\n        if isinstance(user_engagement, str) and user_engagement != '_ext_':\n            try:\n                user_engagement = int(float(user_engagement))\n            except ValueError:\n                user_engagement = 0\n        new_row.append(user_engagement)\n        \n        # Transform post_content: keep as is\n        new_row.append(post_content)\n        \n        # Transform tone: convert to lowercase\n        tone = row_dict.get('tone', '')\n        if isinstance(tone, str) and tone != '_ext_':\n            tone = tone.lower()\n        new_row.append(tone)\n        \n        output_table.append(new_row)\n    \n    return output_table\n```"
+                }
+            ],
+            "schema": {
+                "post_content": "string",
+                "post_language": "boolean",
+                "post_tags": "complex",
+                "tone": "boolean",
+                "user_engagement": "number"
+            }
+        },
+        "PlanEval_score" : 0.88
+    },
+    {
+        "fileName" : "students_grades.json",
+        "engineMetrics" : {
+            "contents": {
+                "best_plan": [
+                    "missingValues/impute",
+                    "duplicates",
+                    "outliers/impute"
+                ],
+                "max_dq_achieved": 0.983,
+                "plans_computed_count": 36,
+                "plans_failed_count": 0
+            },
+            "from": "planning_engine"
+        },
+        "planComputed" : {
+            "plan": [
+                "students_grades_source.json",
+                {
+                    "associated_key": null
+                },
+                {
+                    "standardiseFeatures": "```python\n{\n    (\"Midterm_Score\",): (\"midterm_score\",),\n    (\"Quizzes_Avg\",): (\"quizzes_avg\",),\n    (\"Extracurricular_Activities\",): (\"takes_extracurriculars\",),\n    (\"Parent_Education_Level\",): (\"Parent_Education_Level\",),\n    (\"Stress_Level (1-10)\",): (\"Stress_Level (1-10)\",),\n    (\"Family_Income_Level\",): (\"Family_Income_Level\",),\n    (\"Email\",): (\"student_email\",),\n    (\"First_Name\", \"Last_Name\"): (\"full_name\",),\n    (\"Total_Score\",): (\"student_total_score\",),\n    (\"Study_Hours_per_Week\",): (\"weekly_study_hours\",),\n    (\"Gender\",): (\"student_gender\",),\n    (\"Sleep_Hours_per_Night\",): (\"Sleep_Hours_per_Night\",),\n    (\"Final_Score\",): (\"final_score\",),\n    (\"Grade\",): (\"grade\",),\n    (\"Attendance (%)\",): (\"attendance_percent\",),\n    (\"Age\",): (\"student_age\",),\n    (\"Assignments_Avg\",): (\"assignments_avg\",),\n    (\"Internet_Access_at_Home\",): (\"has_home_internet\",),\n    (\"Projects_Score\",): (\"projects_score\",),\n    (\"Student_ID\",): (\"student_id\",),\n    (\"Department\",): (\"dept\",),\n    (\"Participation_Score\",): ()\n}\n```"
+                },
+                "missingValues/impute",
+                "duplicates",
+                "outliers/impute",
+                {
+                    "standardiseValues": "```python\ndef transform_table(input_table):\n    # Extract headers and data rows\n    headers = input_table[0]\n    data = input_table[1:]\n    \n    # Create a map for easy column index lookup\n    col_map = {col: idx for idx, col in enumerate(headers)}\n    \n    # Initialize output table with the first row (headers) from output_table\n    output_data = []\n    \n    for row in data:\n        new_row = []\n        \n        # Process each column based on input data\n        \n        # midterm_score - direct mapping\n        new_row.append(row[col_map['midterm_score']])\n        \n        # quizzes_avg - direct mapping\n        new_row.append(row[col_map['quizzes_avg']])\n        \n        # takes_extracurriculars - convert to binary (0/1)\n        extracurricular = 1 if row[col_map['takes_extracurriculars']] == 'Yes' else 0\n        new_row.append(extracurricular)\n        \n        # Parent_Education_Level - direct mapping, handle None values\n        parent_edu = row[col_map['Parent_Education_Level']]\n        if parent_edu == 'None' or parent_edu is None:\n            parent_edu = \"None\"\n        new_row.append(parent_edu)\n        \n        # Stress_Level (1-10) - direct mapping\n        new_row.append(row[col_map['Stress_Level (1-10)']])\n        \n        # Family_Income_Level - direct mapping\n        new_row.append(row[col_map['Family_Income_Level']])\n        \n        # student_email - direct mapping\n        new_row.append(row[col_map['student_email']])\n        \n        # full_name - combine first and last name\n        full_name_parts = row[col_map['full_name']].split('|')\n        full_name = f\"{full_name_parts[0]} {full_name_parts[1]}\"\n        new_row.append(full_name)\n        \n        # student_total_score - direct mapping\n        new_row.append(row[col_map['student_total_score']])\n        \n        # weekly_study_hours - direct mapping\n        new_row.append(row[col_map['weekly_study_hours']])\n        \n        # student_gender - direct mapping\n        new_row.append(row[col_map['student_gender']])\n        \n        # Sleep_Hours_per_Night - direct mapping\n        new_row.append(row[col_map['Sleep_Hours_per_Night']])\n        \n        # final_score - direct mapping\n        new_row.append(row[col_map['final_score']])\n        \n        # grade - direct mapping\n        new_row.append(row[col_map['grade']])\n        \n        # attendance_percent - direct mapping\n        new_row.append(row[col_map['attendance_percent']])\n        \n        # student_age - direct mapping\n        new_row.append(row[col_map['student_age']])\n        \n        # assignments_avg - direct mapping, can be None\n        new_row.append(row[col_map['assignments_avg']])\n        \n        # has_home_internet - convert to binary (1/0)\n        has_internet = 1 if row[col_map['has_home_internet']] == 'Yes' else 0\n        new_row.append(has_internet)\n        \n        # projects_score - direct mapping\n        new_row.append(row[col_map['projects_score']])\n        \n        # student_id - direct mapping\n        new_row.append(row[col_map['student_id']])\n        \n        # dept - direct mapping\n        new_row.append(row[col_map['dept']])\n        \n        output_data.append(new_row)\n    \n    return output_data\n```"
+                }
+            ],
+            "schema": {
+                "Family_Income_Level": "string",
+                "Parent_Education_Level": "string",
+                "Sleep_Hours_per_Night": "number",
+                "Stress_Level (1-10)": "number",
+                "assignments_avg": "number",
+                "attendance_percent": "number",
+                "dept": "string",
+                "final_score": "number",
+                "full_name": "string",
+                "grade": "string",
+                "has_home_internet": "boolean",
+                "midterm_score": "number",
+                "projects_score": "number",
+                "quizzes_avg": "number",
+                "student_age": "number",
+                "student_email": "string",
+                "student_gender": "boolean",
+                "student_id": "string",
+                "student_total_score": "number",
+                "takes_extracurriculars": "boolean",
+                "weekly_study_hours": "number"
+            }
+        },
+        "PlanEval_score" : 0.90
+    }
+]

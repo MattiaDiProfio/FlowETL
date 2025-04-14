@@ -1,9 +1,6 @@
 # Datasets factsheet
 
-Here you will find the following information about all files within the `/datasets` folder
-
-**Datasets domain distribution chart**
-![alt text](datasets_category_distribution.png "datasets_category_distribution")
+Here you will find the following information about all files within the `/datasets` folder. This file also contains the ground truth (GT) for all datasets
 
 ### Structured files
 

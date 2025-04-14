@@ -47,7 +47,8 @@
                 "trade_volume_millions": "string",
                 "volume": "number"
             }
-        }
+        },
+        "PlanEval_score" : 0.73
     },
     {
         "fileName" : "chess_games.csv",
@@ -109,7 +110,8 @@
                 "w_rating": "number",
                 "winner": "string"
             }
-        }
+        },
+        "PlanEval_score" : 0.92
     },
     {
         "fileName" : "ecommerce_transactions.csv",
@@ -163,7 +165,8 @@
                 "stock_code": "ambiguous",
                 "unit_price": "number"
             }
-        }
+        },
+        "PlanEval_score" : 0.90
     },
     {
         "fileName" : "financial_compliance.csv",
@@ -225,7 +228,8 @@
                 "total_audit_engagement": "boolean",
                 "year": "boolean"
             }
-        }
+        },
+        "PlanEval_score" : 0.79
     },
     {
         "fileName" : "netflix_users.csv",
@@ -279,7 +283,8 @@
                 "subscription": "string",
                 "watch_time_hours": "number"
             }
-        }
+        },
+        "PlanEval_score" : 0.85
     },
     {
         "fileName" : "pixar_films.csv",
@@ -343,7 +348,8 @@
                 "total_box_office": "string",
                 "watch_rating": "string"
             }
-        }
+        },
+        "PlanEval_score" : 0.88
     },
     {
         "fileName" : "smartwatch_health_data.csv",
@@ -393,7 +399,8 @@
                 "step_count": "number",
                 "stress_level": "number"
             }
-        }
+        },
+        "PlanEval_score" : 0.95
     },
     {
         "fileName" : "amazon_reviews.json",
@@ -439,7 +446,8 @@
                 "reviewer_id": "string",
                 "user_name": "string"
             }
-        }
+        },
+        "PlanEval_score" : 0.87
     },
     {
         "fileName" : "flight_routes.json",
@@ -490,7 +498,8 @@
                 "src": "string",
                 "src_lon": "number"
             }
-        } 
+        },
+        "PlanEval_score" : 0.85 
     },
     {
         "fileName" : "news_categories.json",
@@ -538,7 +547,8 @@
                 "link": "string",
                 "published_date": "string"
             }
-        } 
+        },
+        "PlanEval_score" : 0.90 
     },
     {
         "fileName" : "recipes.json",
@@ -582,7 +592,8 @@
                 "ingredients_list": "complex",
                 "recipe_id": "string"
             }
-        } 
+        },
+        "PlanEval_score" : 0.95
     },
     {
         "fileName" : "social_media_posts.json",
@@ -631,7 +642,8 @@
                 "tone": "string",
                 "user_engagement": "number"
             }
-        }
+        },
+        "PlanEval_score" : 0.86
     },
     {
         "fileName" : "students_grades.json",
@@ -695,6 +707,7 @@
                 "student_id": "string",
                 "weekly_study_hours": "number"
             }
-        }
+        },
+        "PlanEval_score" : 0.90
     }
 ]
