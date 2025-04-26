@@ -173,10 +173,9 @@ def infer_transformation_logic(ti):
     - Use the provided column mapping and schemas to guide your logic
     - Leave any cell with the value '_ext_' unchanged
     - Handle numeric operations carefully: convert strings to float before using them
-    - If a value is in the form "A|B", you may use both components for derived values
+    - If a cell contains `A|B`, you may split on `|` and use both values.
     - Assume column renaming and reordering is already done
     - Be named exactly `transform_table` since there are some other processes which expect this name
-    - **Not randomly create values**, but generalise the larger inputs
 
     Special mapping rules:
     - `("col1", "col2") -> ("new_col",)` means you should merge these two columns into one
@@ -188,7 +187,7 @@ def infer_transformation_logic(ti):
     Important:
     - Return only a valid, executable Python function — no explanations, no comments
     - Your response will be evaluated by `exec()`, so the code must not contain errors
-    - Your logic should generalize to similar tables — **do not hardcode, do not provide samples, and do not randomly generate cell values**. Operate on the input table instead.
+    - Your logic should generalize to similar tables — **do not hardcode, do not provide samples, and do not randomly generate cell values**.
     
     Generate the code for the following:
 
@@ -343,7 +342,7 @@ def publish_metrics(ti):
 
 
 with DAG(
-    'computer', 
+    'PlanningEngine', 
     default_args={'owner': 'airflow','retries': 1,'retry_delay': timedelta(minutes=5)},
     schedule_interval=None,  
     start_date=datetime(2025, 2, 4),  
