@@ -1,0 +1,82 @@
+code
+├── .gitignore
+├── docker_services
+│   ├── .env
+│   ├── config
+│   ├── dags
+│   │   ├── airflowDAG.py
+│   │   ├── planning_utils.py
+│   ├── docker-compose.yml
+│   ├── Dockerfile
+│   ├── logs
+│   └── plugins
+├── etl_logs
+├── etl_worker.py
+├── evaluation
+│   ├── bonobo_etl_experiment
+│   │   ├── bonoboutils.py
+│   │   ├── bonoboworker.py
+│   │   ├── polluter.py
+│   │   └── __pycache__
+│   │       ├── bonoboutils.cpython-313.pyc
+│   │       └── polluter.cpython-313.pyc
+│   ├── flowetl_runtime_results
+│   │   └── result.csv
+│   ├── GT.md
+│   ├── planning_engine_versions_comparison_experiment
+│   │   ├── info.md
+│   │   ├── results.csv
+│   │   ├── v1.json
+│   │   └── v2.json
+│   ├── sampling_percentage_experiment
+│   │   └── results.csv
+│   └── schema_inference_experiment
+│       └── results.csv
+├── evaluation_datasets
+│   ├── source
+│   │   ├── csv
+│   │   │   ├── amazon_stock_data_source.csv
+│   │   │   ├── chess_games_source.csv
+│   │   │   ├── ecommerce_transactions_source.csv
+│   │   │   ├── financial_compliance_source.csv
+│   │   │   ├── netflix_users_source.csv
+│   │   │   ├── pixar_films_source.csv
+│   │   │   └── smartwatch_health_data_source.csv
+│   │   └── json
+│   │       ├── amazon_reviews_source.json
+│   │       ├── flight_routes_source.json
+│   │       ├── news_categories_source.json
+│   │       ├── recipes_source.json
+│   │       ├── social_media_posts_source.json
+│   │       └── students_grades_source.json
+│   └── target
+│       ├── csv
+│       │   ├── amazon_stock_data_target.csv
+│       │   ├── chess_games_target.csv
+│       │   ├── ecommerce_transactions_target.csv
+│       │   ├── financial_compliance_target.csv
+│       │   ├── nextflix_users_target.csv
+│       │   ├── pixar_films_target.csv
+│       │   └── smartwatch_health_data_target.csv
+│       └── json
+│           ├── amazon_reviews_target.json
+│           ├── flight_routes_target.json
+│           ├── news_categories_target.json
+│           ├── recipes_target.json
+│           ├── social_media_posts_target.json
+│           └── students_grades_target.json
+├── input
+│   ├── source
+│   └── target
+├── logs
+├── observers
+│   ├── driver.py
+│   ├── logs
+│   ├── observer_utils.py
+├── output
+├── reporter.py
+├── requirements.txt
+├── testvenv
+├── unit_tests.py
+└── venv
+ 
