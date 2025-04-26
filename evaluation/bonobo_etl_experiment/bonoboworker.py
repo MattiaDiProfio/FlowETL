@@ -459,7 +459,7 @@ def get_services():
     return {}
 
 if __name__ == '__main__':
-    path = "..\\datasets\\source\\json\\amazon_reviews_source.json"
+    path = "..\\evaluation_datasets\\source\\json\\amazon_reviews_source.json"
     start_time = time.time()
     bonobo.run(get_graph(path), services=get_services())
     total_time = time.time() - start_time

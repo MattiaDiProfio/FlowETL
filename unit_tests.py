@@ -6,7 +6,7 @@ class TestDataTaskNodes(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # the ir below contains missing values, duplicate rows, and outlier numerical values
+        # define an internal representation containing missing values, duplicated rows, and numerical outliers
         self.source = [
             ["studentID", "Name",        "Age",    "Salary", "City"         ],
             [1,           "Alice",        25,      None,     "New York"     ],
@@ -28,8 +28,9 @@ class TestDataTaskNodes(unittest.TestCase):
         ]
 
     def assertInternalRepresentationsEquality(self, original_ir, transformed_ir):
-        
-        """ custom assertion to check that two internal representations contain the same rows, order is disregarded"""
+        """ 
+        Custom assertion to check that two internal representations contain the same rows, order is disregarded
+        """
 
         # convert each row in both IRs to a hashed version of itself
         hashed_original_ir = [ "".join([ str(cell) for cell in row ]) for row in original_ir ]
@@ -40,8 +41,9 @@ class TestDataTaskNodes(unittest.TestCase):
             raise self.failureException("Mismatch between the two internal representation")
 
     def test_custom_assertion(self):
-
-        """ test that the custom assertion works as expected """
+        """ 
+        Test that the custom assertion works as expected 
+        """
 
         a = [[1,2,3], [4,5,6]]
         b = [[4,5,6], [1,2,3]]
@@ -56,7 +58,7 @@ class TestDataTaskNodes(unittest.TestCase):
 
     def test_impute_missing_values(self):
         """
-        test if the missing value handler with an "impute" strategy works correctly
+        Test if the missing value handler with an "impute" strategy works correctly
         this strategy should replace all None values with a placeholder appropiate for the 
         column type
         """
@@ -87,7 +89,7 @@ class TestDataTaskNodes(unittest.TestCase):
 
     def test_drop_rows_with_missing_values(self):
         """
-        test if the missing value handler with an "drop.rows" strategy works correctly
+        Test if the missing value handler with an "drop.rows" strategy works correctly
         this strategy should drop all rows containing a None value
         """
 
@@ -102,9 +104,8 @@ class TestDataTaskNodes(unittest.TestCase):
         self.assertInternalRepresentationsEquality(expected, actual)
 
     def test_drop_majority_missing_columns(self):
-
         """
-        test if the missing value handler with an "drop.columns" strategy works correctly
+        Test if the missing value handler with an "drop.columns" strategy works correctly
         this strategy should drop all columns with 50%+ missing values
         """
 
@@ -134,8 +135,9 @@ class TestDataTaskNodes(unittest.TestCase):
         self.assertTrue("Salary" not in expected[0])
 
     def test_duplicate_row_handler(self):
-
-        """ test if the duplicate row handler works as expected. It should remove all duplicate rows from the IR """
+        """
+        Test if the duplicate row handler works as expected. It should remove all duplicate rows from the IR 
+        """
 
         expected = [
             ["studentID", "Name",        "Age",    "Salary", "City"         ],
@@ -159,12 +161,11 @@ class TestDataTaskNodes(unittest.TestCase):
         self.assertInternalRepresentationsEquality(expected, actual)
 
     def test_drop_numerical_outliers(self):
-        
         """
-        test if the outlier value handler with an "drop" strategy works correctly
+        Test if the outlier value handler with an "drop" strategy works correctly
         this strategy should drop all rows containing numerical outliers
 
-        NOTE! this task node requires that we handling missing values first!
+        NOTE : this task node requires that we handling missing values first!
         """
 
         expected = [
@@ -190,12 +191,11 @@ class TestDataTaskNodes(unittest.TestCase):
         self.assertInternalRepresentationsEquality(expected, actual)
 
     def test_impute_numerical_outliers(self):
-        
         """
-        test if the outlier value handler with an "impute" strategy works correctly
+        Test if the outlier value handler with an "impute" strategy works correctly
         this strategy should replace all numerical outliers with the median of their column
 
-        NOTE! this task node requires that we handling missing values first!
+        NOTE this task node requires that we handling missing values first!
         """
 
         expected = [
@@ -224,7 +224,10 @@ class TestDataTaskNodes(unittest.TestCase):
         self.assertInternalRepresentationsEquality(expected, actual)
 
     def test_infer_schema(self):
-        
+        """
+        Test that the infer_schema method works as expected.
+        """
+
         nums_and_strings_column = [['columnHeader'], ['0.5'], [9], [34], ['221']]
         all_strings_column = [['columnHeader'], ['a'], ['hello'], ['test'], ['dissertation']]
         boolean_column_1 = [['columnHeader'], [True], [False], [True], [True], [False], [False]]
@@ -242,6 +245,9 @@ class TestDataTaskNodes(unittest.TestCase):
         self.assertEqual(infer_schema(numerical_column), {'columnHeader' : 'number'})
 
     def test_data_quality_calculator_node(self):
+        """
+        Test that the data quality calculation process works as expected.
+        """
 
         inferred_schema = infer_schema(self.source)
         dq_before = compute_dq(self.source, inferred_schema)
@@ -253,6 +259,7 @@ class TestDataTaskNodes(unittest.TestCase):
         
         dq_after = compute_dq(outlier, inferred_schema)
         self.assertTrue(dq_after > dq_before)
+
 
 if __name__ == '__main__':
     unittest.main()

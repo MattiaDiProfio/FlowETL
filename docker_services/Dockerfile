@@ -2,7 +2,7 @@ FROM apache/airflow:2.10.4
 
 USER root
 
-# Install system dependencies if needed
+# install system dependencies if needed
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
@@ -11,9 +11,9 @@ RUN apt-get update && \
 
 USER airflow
 
-# Install Python dependencies
+# install Python dependencies
 RUN pip install --no-cache-dir \
     kafka-python-ng \
-    thefuzz \
-    sentence-transformers \
-    openai
+    # thefuzz \
+    # sentence-transformers \
+    # openai

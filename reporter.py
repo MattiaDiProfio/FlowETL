@@ -1,10 +1,3 @@
-
-"""
-this reported class listens for information coming from a specific topic of the kafka broker
-as the messages come in, the reporter "populates" itself with the information within the payload
-once an internal check for "all attributes filled?" returned true, the report "compiles" and the script terminates
-"""
-
 import json
 import logging
 import textwrap
@@ -14,61 +7,52 @@ from kafka.errors import NoBrokersAvailable, UnrecognizedBrokerVersion
 
 class ETLReport:
 
+
     def __init__(self, broker):
-        # NOTE - if the report is set to verbose, then it will include all "[]" below, otherwise we omit them to keep the report concise
+        """
+        Method initialises the ETLReport object
+
+        :param broker: Kafka broker consumer instance used to self-populate the report object
+        """
 
         self.broker = broker
 
-        self.start_datetime = datetime.now() # start datetime of the etl run, i.e. when the first file is uploaded to the input 
+        # set the ETL's start time to when the report is first started
+        self.start_datetime = datetime.now() 
 
-        self.source_info = { # holds information about the source file (not the sample, the actual file)
-            'filename' : '',
-            'objects_count': 0,
-            'filesize_mbs' : 0,
-        }
+        # define dictionaries to hold the respective metrics for each subsection of the ETL report
+        self.source_info = { 'filename' : '','objects_count': 0,'filesize_mbs' : 0 }
+        self.target_info = { 'filename' : '','objects_count': 0,'filesize_mbs' : 0 }
+        self.planning_engine_info = { 'plans_computed_count' : 0,'plans_failed_count': 0,'max_dq_achieved': 0,'best_plan': [] }
+        self.pre_etl_run_info = {'missing': {'missing_cells_percent': 0},'outliers' : {'numerical_outliers_percent' : 0},'duplicates': {'duplicate_rows_percent' : 0},'dq': 0 }
+        self.post_etl_run_info = {'missing': {'missing_cells_percent': 0},'outliers' : {'numerical_outliers_percent' : 0},'duplicates': {'duplicate_rows_percent' : 0},'dq': 0}
 
-        self.target_info = { # holds information about the target_file
-            'filename' : '',
-            'objects_count': 0,
-            'filesize_mbs' : 0,
-        }
-
-        self.planning_engine_info = {
-            'plans_computed_count': 0,
-            'plans_failed_count': 0,
-            'max_dq_achieved': 0,
-            'best_plan': []
-        }
-
-        # this is the pre-etl run info
-        self.pre_etl_run_info = {
-            'missing': {'missing_cells_percent': 0},
-            'outliers' : {'numerical_outliers_percent' : 0},
-            'duplicates': {'duplicate_rows_percent' : 0},
-            'dq': 0
-        }
-
-        # this is the post-etl run info
-        self.post_etl_run_info = {
-            'missing': {'missing_cells_percent': 0},
-            'outliers' : {'numerical_outliers_percent' : 0},
-            'duplicates': {'duplicate_rows_percent' : 0},
-            'dq': 0
-        }
-
+        # define control variables used to check the completion status of the report
         self.source_info_populated = False
         self.target_info_populated = False
         self.planning_info = False
         self.pre_etl_info = False
         self.post_etl_info = False
 
-    # returns true if all report properties are complete, false otherwise
+
     def is_complete(self):
+        """
+        Method checks whether all subsections of the report have been populated
+
+        :param None:
+        :return True if all subsections are populated, false otherwise
+        """
         return all([self.source_info_populated,self.target_info_populated,self.planning_info,self.pre_etl_info,self.post_etl_info])
     
-    # listens to kafka broker until it dies or until the report is fully populated
+
     def run(self):
+        """
+        Method listens to Kafak broker until the ETLReport subsections are all populated or the Kafka broker fails
+        """
+
         try:
+
+            # continue to poll the broker's 'etlMetrics' topic
             message = self.broker.poll()
             while not message: 
                 message = self.broker.poll()   
@@ -79,13 +63,13 @@ class ETLReport:
                     if record.key == b'metrics':
                         
                         # read the metrics received
-                        
                         data = json.loads(record.value.decode('utf-8'))
                         
                         # update the report if possible
                         data_from = data['from'] # this tells us which component published the metrics
                         contents = data['contents']
 
+                        # update the subsection of the report for which the metrics were received
                         if data_from == 'source_observer': 
                             self.source_info = contents
                             self.source_info_populated = True
@@ -102,40 +86,42 @@ class ETLReport:
                             self.post_etl_run_info = contents
                             self.post_etl_info = True
         
-            # if the report is full, call its save method 
-            # connection, otherwise recursively call populate to keep on listening
+            # once the report is fully completed, write its contents to the required folder
             if self.is_complete(): 
-
                 self.save()
                 self.broker.close()
 
-            else: self.run() # keep on listening for more metrics, until the report is fully populated
+            else: 
+                # keep on listening for more metrics, until the report is fully populated
+                self.run() 
 
         except (NoBrokersAvailable, UnrecognizedBrokerVersion, ValueError):
             logging.error("NoBrokersAvailable : no broker could be detected")
 
 
-    # compile instance contents into a report string
     def compile(self):
+        """
+        Method compiles the ETLReport instance's contents into a string report
+        """
+
+        # ensure all subsections of the report have been filled out
         if self.is_complete():
-            # Calculate the width of the box (including borders)
-            box_width = 100 # Based on the header line in your latest example
             
-            # Helper function to create a padded line with proper right border alignment
+            report_width = 100 
+        
             def format_line(label, value):
                 content = f"| {label}: {value}"
-                padding = " " * (box_width - len(content) - 1)  # -1 for the end pipe
+                padding = " " * (report_width - len(content) - 1)  # -1 for the end pipe
                 return f"{content}{padding}|"
         
-            # Helper function to create section headers
             def format_header(title):
-                dashes_each_side = (box_width - len(title) - 6) // 2
+                dashes_each_side = (report_width - len(title) - 6) // 2
                 return f"+ {'-' * (dashes_each_side+1)}{title}{'-' * (dashes_each_side+1)} +"
             
-            # Create the final header line
             def format_final_line():
-                return f"+ {'-' * (box_width - 4)} +"
+                return f"+ {'-' * (report_width - 4)} +"
         
+            # build and return the report string
             report = textwrap.dedent(f"""\
             {format_header("-------ETL Report-------")}
             {format_line("time-elapsed", f"{(datetime.now() - self.start_datetime).total_seconds()} s")}
@@ -168,22 +154,38 @@ class ETLReport:
             logging.warning("Cannot compile an incomplete report")
             return ""
         
-    # "save" the report by writing its contents to the logs folder
+
     def save(self):
+        """
+        Method writes the contents of a full report to the designated logs folder
+        """
+
+        # define time-stamped report name and destination path
         report_name = f"etl_{self.start_datetime.strftime("%Y_%m_%d_%H_%M_%S")}.logs"
         write_path = f"etl_logs\\{report_name}"
+
+        # compile the report's content to a string 
         compiled_report = self.compile()
-        with open(write_path, "w") as file: file.write(compiled_report)
+
+        # dump the compiled report to the logs destination
+        with open(write_path, "w") as file: 
+            file.write(compiled_report)
+
         logging.info(f"ETL report written and saved to '{write_path}'")
+
 
 if __name__ == "__main__":
 
     try:
+        # create an instance of a consumer to collect metrics from the 'etlMetrics' topic
         consumer = KafkaConsumer('etlMetrics', bootstrap_servers=['localhost:9092'])
+
         logging.basicConfig(level="INFO")
         logging.info("Connected to broker")
+
+        # instantiate and start the reporter object
         r = ETLReport(consumer)
         r.run()
-
+        
     except (NoBrokersAvailable, UnrecognizedBrokerVersion, ValueError):
         logging.error("NoBrokersAvailable : no broker could be detected")

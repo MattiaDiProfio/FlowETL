@@ -8,7 +8,8 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 class BaseObserver:
- 
+    
+
     def __init__(self, role, directory, kafka_producer, logger):
         self.observer = Observer()
         self.logger = logger
@@ -93,7 +94,6 @@ class EventHandler(FileSystemEventHandler):
             self.observer_instance.upload_detected = True
 
 
-
 def extract_list(collection, key):
     if isinstance(collection, list): 
         return (key, collection)
@@ -102,6 +102,7 @@ def extract_list(collection, key):
             result = extract_list(value, k)
             if result: 
                 return result
+
 
 def to_internal(filepath):
 
@@ -164,10 +165,9 @@ def extract_sample(internal_representation, p=0.05):
     headers = internal_representation[0]
     sampled_internal_representation.append(headers)
 
-    # choose sample of rows
-
     cap = 20 # cap the IR sample to 20 entries
-    
+
+    # choose sample of rows
     sampled_row_indices = random.sample(range(1, len(internal_representation)), int( min(cap, (len(internal_representation)-1) * p) ))
     for row_index in sampled_row_indices:
         sampled_internal_representation.append(internal_representation[row_index])
