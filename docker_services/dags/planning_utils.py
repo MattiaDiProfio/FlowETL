@@ -1,8 +1,8 @@
 import csv
 import json
 import itertools
-from thefuzz import fuzz
-from sentence_transformers import SentenceTransformer
+# from thefuzz import fuzz
+# from sentence_transformers import SentenceTransformer
 import logging
 import numpy as np
 import ast
@@ -542,38 +542,39 @@ def to_internal(filepath):
 
 
 def compute_graphs(source, target, weight_threshold=0.5):
-    """
-    Method to compute the similarity graph between the source and target columns. NOTE that
-    this method is redundant and has been included purely to provide a detailed account
-    of the implementation steps
-    """
+    pass
+#     """
+#     Method to compute the similarity graph between the source and target columns. NOTE that
+#     this method is redundant and has been included purely to provide a detailed account
+#     of the implementation steps
+#     """
 
-    model = SentenceTransformer("all-MiniLM-L6-v2")
+#     model = SentenceTransformer("all-MiniLM-L6-v2")
 
-    # embed the input and target headers
-    source_embeddings, target_embeddings = model.encode(source), model.encode(target)
-    source_attributes_embedding_map = { attribute : embedding for attribute, embedding in zip(source, source_embeddings) }
-    target_attributes_embedding_map = { attribute : embedding for attribute, embedding in zip(target, target_embeddings) }
+#     # embed the input and target headers
+#     source_embeddings, target_embeddings = model.encode(source), model.encode(target)
+#     source_attributes_embedding_map = { attribute : embedding for attribute, embedding in zip(source, source_embeddings) }
+#     target_attributes_embedding_map = { attribute : embedding for attribute, embedding in zip(target, target_embeddings) }
 
-    X, Y = source, target
-    gX, gY = {}, {} # becomes the preference list for each attribute in X and Y (preference is the weight computed)
+#     X, Y = source, target
+#     gX, gY = {}, {} # becomes the preference list for each attribute in X and Y (preference is the weight computed)
 
-    for v in Y: 
-        for u in X: 
-            sentence_similiarity = model.similarity(source_attributes_embedding_map[u], target_attributes_embedding_map[v])[0][0].item()
-            levenshtein_distance = fuzz.ratio(u, v)/100 
-            weight = round((levenshtein_distance + sentence_similiarity)/2, 3)
+#     for v in Y: 
+#         for u in X: 
+#             sentence_similiarity = model.similarity(source_attributes_embedding_map[u], target_attributes_embedding_map[v])[0][0].item()
+#             levenshtein_distance = fuzz.ratio(u, v)/100 
+#             weight = round((levenshtein_distance + sentence_similiarity)/2, 3)
 
-            if weight > weight_threshold:
-                # record the undirected edge between the nodes u and v
-                gX[u] = gX[u] + [(v, weight)] if u in gX else [(v, weight)]
-                gY[v] = gY[v] + [(u, weight)] if v in gY else [(u, weight)]
+#             if weight > weight_threshold:
+#                 # record the undirected edge between the nodes u and v
+#                 gX[u] = gX[u] + [(v, weight)] if u in gX else [(v, weight)]
+#                 gY[v] = gY[v] + [(u, weight)] if v in gY else [(u, weight)]
 
-    # sort each node's edge list by weight descending - required by the schema-matching algorithm
-    for node in gX: gX[node].sort(key=lambda edge : edge[1], reverse = True)
-    for node in gY: gY[node].sort(key=lambda edge : edge[1], reverse = True)
+#     # sort each node's edge list by weight descending - required by the schema-matching algorithm
+#     for node in gX: gX[node].sort(key=lambda edge : edge[1], reverse = True)
+#     for node in gY: gY[node].sort(key=lambda edge : edge[1], reverse = True)
     
-    return gX, gY
+#     return gX, gY
 
 
 def gale_shapley(source, target, diff=0.05):

@@ -12,8 +12,8 @@ RUN apt-get update && \
 USER airflow
 
 # install Python dependencies
-RUN pip install --no-cache-dir \
+RUN pip install \
     kafka-python-ng \
-    # thefuzz \
-    # sentence-transformers \
-    # openai
+    thefuzz \
+    sentence-transformers \
+    openai
