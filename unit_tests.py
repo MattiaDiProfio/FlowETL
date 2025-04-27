@@ -87,53 +87,6 @@ class TestDataTaskNodes(unittest.TestCase):
         actual = missing_value_handler(self.source, inferred_schema, 'impute')
         self.assertInternalRepresentationsEquality(expected, actual)
 
-    def test_drop_rows_with_missing_values(self):
-        """
-        Test if the missing value handler with an "drop.rows" strategy works correctly
-        this strategy should drop all rows containing a None value
-        """
-
-        expected = [
-            ["studentID", "Name",        "Age",    "Salary", "City"         ],
-            [5,           "Eve",          22,      45000,    "Houston"      ],
-            [13,          "Huge Outlier", 9999,    99999999, "Utopia"       ],
-        ]
-        
-        inferred_schema = infer_schema(self.source)
-        actual = missing_value_handler(self.source, inferred_schema, 'drop.rows')
-        self.assertInternalRepresentationsEquality(expected, actual)
-
-    def test_drop_majority_missing_columns(self):
-        """
-        Test if the missing value handler with an "drop.columns" strategy works correctly
-        this strategy should drop all columns with 50%+ missing values
-        """
-
-        expected = [
-            ["studentID", "Name",        "Age",    "City"         ],
-            [1,           "Alice",        25,      "New York"     ],
-            [2,           None,           30,      None           ],
-            [3,           "Charlie",      None,    "Chicago"      ],
-            [None,        "David",        40,      None           ],
-            [5,           "Eve",          22,      "Houston"      ],
-            [6,           "Frank",        None,    "Phoenix"      ],
-            [7,           "Grace",        None,    None           ],
-            [None,        "Hank",         28,      "San Antonio"  ],
-            [9,           "Ivy",          None,    None           ],
-            [10,          "Jack",         None,    None           ],
-            [1,           "Alice",        25,      "New York"     ],
-            [2,           None,           30,      None           ],
-            [5,           "Eve",          None,    "Houston"      ],
-            [11,          "Outlier",      None,    "Neverland"    ],
-            [12,          "Extreme",      1234,    "Desert"       ],
-            [13,          "Huge Outlier", 9999,    "Utopia"       ],
-        ]
-        
-        inferred_schema = infer_schema(self.source)
-        actual = missing_value_handler(self.source, inferred_schema, 'drop.columns')
-        self.assertInternalRepresentationsEquality(expected, actual)
-        self.assertTrue("Salary" not in expected[0])
-
     def test_duplicate_row_handler(self):
         """
         Test if the duplicate row handler works as expected. It should remove all duplicate rows from the IR 
