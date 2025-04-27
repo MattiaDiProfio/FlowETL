@@ -40,12 +40,14 @@ You should use the API key provided by the author or set up your own one from [O
 
 **Build FlowETL Instance**.
 
-1. Using Git Bash, travel to the directory `docker_services/.`
+1. Start Docker Desktop on your machine, then using Git Bash, travel to the directory `docker_services/.`
 
 2. Run the command `docker build -t test:latest .` to create a Docker image using the
 Dockerfile.
 
-3. Using Git Bash, travel back to the base directory and run the command `pip install -r requirements.txt` to install all the required dependecies.
+3. Using Git Bash, travel back to the base directory of your project and create a virtual environment named `venv` with `python -m venv venv`, then activate it using the command `source venv\Scripts\activate`. 
+
+4. Using Git Bash, run the command `pip install -r requirements.txt` to install all the required dependecies within the activated `venv` virtual environment. 
 
 ### Starting the Pipeline
 
@@ -73,6 +75,8 @@ the other.
 1. Stop all processes running on Git Bash by clicking on each terminal and pressing `CTRL + C` on your keyboard.
 
 2. Stop the docker services either via Docker Desktop or by travelling to the directory `docker_services/` and running the command `docker compose down`.
+
+3. Deactivate your virtual environment with the command `deactivate`.
 
 ### Using the Pipeline
 
@@ -147,11 +151,11 @@ evaluation subroutines.
 
 **Running Unit Tests** 
 
-Activate the virtual environment venv from within your FlowETL base directory, then run `python unit_tests.py`.
+Activate the `venv` virtual environment venv from within your FlowETL base directory, then run `python unit_tests.py`.
 
 **Running Bonobo Evaluation**
 
-Activate the virtual environment `testvenv`, then travel to the folder `evaluation/bonobo_etl_experiment` and modify the `bonoboworker.py` file to set the source dataset filepath. Finally, run the worker with `python bonoboworker.py`
+Activate the virtual environment `testvenv`, install the `test_requirements.txt` files, then travel to the folder `evaluation/bonobo_etl_experiment` and modify the `bonoboworker.py` file to set the source dataset filepath. Finally, run the worker with `python bonoboworker.py`
 
 ### Bug Reports
 
