@@ -1,0 +1,71 @@
+[2025-05-01T15:18:26.528+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2025-05-01T15:18:26.544+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: PlanningEngine.computeSchemaMap manual__2025-05-01T15:11:04.438406+00:00 [queued]>
+[2025-05-01T15:18:26.552+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: PlanningEngine.computeSchemaMap manual__2025-05-01T15:11:04.438406+00:00 [queued]>
+[2025-05-01T15:18:26.554+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 2
+[2025-05-01T15:18:26.569+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): computeSchemaMap> on 2025-05-01 15:11:04.438406+00:00
+[2025-05-01T15:18:26.575+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:70: DeprecationWarning: This process (pid=195) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-05-01T15:18:26.577+0000] {standard_task_runner.py:72} INFO - Started process 196 to run task
+[2025-05-01T15:18:26.577+0000] {standard_task_runner.py:104} INFO - Running: ['***', 'tasks', 'run', 'PlanningEngine', 'computeSchemaMap', 'manual__2025-05-01T15:11:04.438406+00:00', '--job-id', '3366', '--raw', '--subdir', 'DAGS_FOLDER/***DAG.py', '--cfg-path', '/tmp/tmp2w9m_mzc']
+[2025-05-01T15:18:26.578+0000] {standard_task_runner.py:105} INFO - Job 3366: Subtask computeSchemaMap
+[2025-05-01T15:18:26.622+0000] {task_command.py:467} INFO - Running <TaskInstance: PlanningEngine.computeSchemaMap manual__2025-05-01T15:11:04.438406+00:00 [running]> on host 29f5f6aefab8
+[2025-05-01T15:18:26.692+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='PlanningEngine' AIRFLOW_CTX_TASK_ID='computeSchemaMap' AIRFLOW_CTX_EXECUTION_DATE='2025-05-01T15:11:04.438406+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-05-01T15:11:04.438406+00:00'
+[2025-05-01T15:18:26.693+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2025-05-01T15:18:26.718+0000] {airflowDAG.py:160} INFO - LLM Prompt : 
+
+    You are given a list of source column headers and target column headers. Your task is to infer a plausible mapping from source to target columns.
+
+    Rules:
+    - At most two source attributes can be merged into one target attribute: represent this as `("s1", "s2"): ("t1")`
+    - A source attribute may also be split into two target attributes: represent this as `("s1"): ("t1", "t2")`
+    - If a source column is dropped, use an empty tuple as the value: `("s1"): ()`
+    - If a target column is created, use an empty tuple as the key: `(): ("t1")`
+    - Every source and target column can appear at most once in each mapping.
+
+    Additional constraints:
+    - Do not include placeholder values such as `None`
+    - Ensure no duplicate keys in the output
+    - Return a valid Python dictionary using tuple keys and values
+    - Do not add any comments, explanations, or surrounding text
+
+    Input:
+    Source columns = ['date', 'open', 'high', 'low', 'close', 'adj_close', 'volume']
+    Target columns = ['date', 'open_price', 'daily_high', 'daily_low', 'close_price', 'trade_volume_millions']
+
+    Return your answer inside a Python code block in the following format:
+
+    ```python
+    { ("source1",): ("target1",), ... }
+    ```
+     
+
+[2025-05-01T15:18:30.217+0000] {airflowDAG.py:180} INFO - LLM Response : 
+```python
+{
+    ("date",): ("date",),
+    ("open",): ("open_price",),
+    ("high",): ("daily_high",),
+    ("low",): ("daily_low",),
+    ("close",): ("close_price",),
+    ("volume",): ("trade_volume_millions",),
+    ("adj_close",): ()
+}
+``` 
+ schema map = ```python
+{
+    ("date",): ("date",),
+    ("open",): ("open_price",),
+    ("high",): ("daily_high",),
+    ("low",): ("daily_low",),
+    ("close",): ("close_price",),
+    ("volume",): ("trade_volume_millions",),
+    ("adj_close",): ()
+}
+```, type = <class 'str'>
+[2025-05-01T15:18:30.234+0000] {python.py:240} INFO - Done. Returned value was: None
+[2025-05-01T15:18:30.242+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2025-05-01T15:18:30.242+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=PlanningEngine, task_id=computeSchemaMap, run_id=manual__2025-05-01T15:11:04.438406+00:00, execution_date=20250501T151104, start_date=20250501T151826, end_date=20250501T151830
+[2025-05-01T15:18:30.281+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2025-05-01T15:18:30.305+0000] {taskinstance.py:3895} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-05-01T15:18:30.308+0000] {local_task_job_runner.py:245} INFO - ::endgroup::
