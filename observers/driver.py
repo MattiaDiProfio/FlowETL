@@ -44,7 +44,7 @@ if __name__ == "__main__":
         source_observer = BaseObserver("s", source_directory, kafka_producer, source_logger)
         target_observer = BaseObserver("t", target_directory, kafka_producer, target_logger)
 
-        source_logger.info(f"Observer stopped on folder {source_directory}")
+        source_logger.info(f"Observer started on folder {source_directory}")
         target_logger.info(f"Observer started on folder {target_directory}")
 
         # start both observers each on a dedicated process
