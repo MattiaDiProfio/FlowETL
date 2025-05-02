@@ -1,0 +1,69 @@
+[2025-05-02T09:52:03.876+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2025-05-02T09:52:03.889+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: PlanningEngine.computeSchemaMap manual__2025-05-02T09:51:18.177482+00:00 [queued]>
+[2025-05-02T09:52:03.896+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: PlanningEngine.computeSchemaMap manual__2025-05-02T09:51:18.177482+00:00 [queued]>
+[2025-05-02T09:52:03.897+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 2
+[2025-05-02T09:52:03.909+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): computeSchemaMap> on 2025-05-02 09:51:18.177482+00:00
+[2025-05-02T09:52:03.915+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:70: DeprecationWarning: This process (pid=211) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-05-02T09:52:03.917+0000] {standard_task_runner.py:72} INFO - Started process 212 to run task
+[2025-05-02T09:52:03.917+0000] {standard_task_runner.py:104} INFO - Running: ['***', 'tasks', 'run', 'PlanningEngine', 'computeSchemaMap', 'manual__2025-05-02T09:51:18.177482+00:00', '--job-id', '3398', '--raw', '--subdir', 'DAGS_FOLDER/***DAG.py', '--cfg-path', '/tmp/tmpdgtfw4r2']
+[2025-05-02T09:52:03.918+0000] {standard_task_runner.py:105} INFO - Job 3398: Subtask computeSchemaMap
+[2025-05-02T09:52:03.953+0000] {task_command.py:467} INFO - Running <TaskInstance: PlanningEngine.computeSchemaMap manual__2025-05-02T09:51:18.177482+00:00 [running]> on host f31e97f3da01
+[2025-05-02T09:52:04.014+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='PlanningEngine' AIRFLOW_CTX_TASK_ID='computeSchemaMap' AIRFLOW_CTX_EXECUTION_DATE='2025-05-02T09:51:18.177482+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-05-02T09:51:18.177482+00:00'
+[2025-05-02T09:52:04.015+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2025-05-02T09:52:04.041+0000] {airflowDAG.py:160} INFO - LLM Prompt : 
+
+    You are given a list of source column headers and target column headers. Your task is to infer a plausible mapping from source to target columns.
+
+    Rules:
+    - At most two source attributes can be merged into one target attribute: represent this as `("s1", "s2"): ("t1")`
+    - A source attribute may also be split into two target attributes: represent this as `("s1"): ("t1", "t2")`
+    - If a source column is dropped, use an empty tuple as the value: `("s1"): ()`
+    - If a target column is created, use an empty tuple as the key: `(): ("t1")`
+    - Every source and target column can appear at most once in each mapping.
+
+    Additional constraints:
+    - Do not include placeholder values such as `None`
+    - Ensure no duplicate keys in the output
+    - Return a valid Python dictionary using tuple keys and values
+    - Do not add any comments, explanations, or surrounding text
+
+    Input:
+    Source columns = ['engagement', 'tone', 'language', 'text', 'line_count', 'tags']
+    Target columns = ['tone', 'user_engagement', 'post_content', 'post_character_count', 'post_language', 'post_tags']
+
+    Return your answer inside a Python code block in the following format:
+
+    ```python
+    { ("source1",): ("target1",), ... }
+    ```
+     
+
+[2025-05-02T09:52:06.883+0000] {airflowDAG.py:180} INFO - LLM Response : 
+```python
+{
+    ("engagement",): ("user_engagement",),
+    ("tone",): ("tone",),
+    ("language",): ("post_language",),
+    ("text",): ("post_content",),
+    ("line_count",): ("post_character_count",),
+    ("tags",): ("post_tags",)
+}
+``` 
+ schema map = ```python
+{
+    ("engagement",): ("user_engagement",),
+    ("tone",): ("tone",),
+    ("language",): ("post_language",),
+    ("text",): ("post_content",),
+    ("line_count",): ("post_character_count",),
+    ("tags",): ("post_tags",)
+}
+```, type = <class 'str'>
+[2025-05-02T09:52:06.899+0000] {python.py:240} INFO - Done. Returned value was: None
+[2025-05-02T09:52:06.907+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2025-05-02T09:52:06.908+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=PlanningEngine, task_id=computeSchemaMap, run_id=manual__2025-05-02T09:51:18.177482+00:00, execution_date=20250502T095118, start_date=20250502T095203, end_date=20250502T095206
+[2025-05-02T09:52:06.945+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2025-05-02T09:52:06.967+0000] {taskinstance.py:3895} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-05-02T09:52:06.971+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

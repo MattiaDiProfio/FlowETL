@@ -1,0 +1,92 @@
+[2025-05-02T09:52:10.068+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2025-05-02T09:52:10.082+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: PlanningEngine.InferTransformationLogic manual__2025-05-02T09:51:18.177482+00:00 [queued]>
+[2025-05-02T09:52:10.090+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: PlanningEngine.InferTransformationLogic manual__2025-05-02T09:51:18.177482+00:00 [queued]>
+[2025-05-02T09:52:10.091+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 2
+[2025-05-02T09:52:10.106+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): InferTransformationLogic> on 2025-05-02 09:51:18.177482+00:00
+[2025-05-02T09:52:10.111+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:70: DeprecationWarning: This process (pid=220) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-05-02T09:52:10.113+0000] {standard_task_runner.py:72} INFO - Started process 221 to run task
+[2025-05-02T09:52:10.113+0000] {standard_task_runner.py:104} INFO - Running: ['***', 'tasks', 'run', 'PlanningEngine', 'InferTransformationLogic', 'manual__2025-05-02T09:51:18.177482+00:00', '--job-id', '3401', '--raw', '--subdir', 'DAGS_FOLDER/***DAG.py', '--cfg-path', '/tmp/tmp61lbsv1l']
+[2025-05-02T09:52:10.114+0000] {standard_task_runner.py:105} INFO - Job 3401: Subtask InferTransformationLogic
+[2025-05-02T09:52:10.150+0000] {task_command.py:467} INFO - Running <TaskInstance: PlanningEngine.InferTransformationLogic manual__2025-05-02T09:51:18.177482+00:00 [running]> on host f31e97f3da01
+[2025-05-02T09:52:10.212+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='PlanningEngine' AIRFLOW_CTX_TASK_ID='InferTransformationLogic' AIRFLOW_CTX_EXECUTION_DATE='2025-05-02T09:51:18.177482+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-05-02T09:51:18.177482+00:00'
+[2025-05-02T09:52:10.214+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2025-05-02T09:52:10.252+0000] {airflowDAG.py:281} INFO - LLM Prompt : 
+
+    You are given two tables represented as 2D lists: an input table and an output table. Your task is to write a Python function that transforms the input table into the output table.
+
+    Your function must:
+    - Perform the necessary data transformations to match the output table
+    - Use the provided column mapping and schemas to guide your logic
+    - Leave any cell with the value '_ext_' unchanged
+    - Handle numeric operations carefully: convert strings to float before using them
+    - If a cell contains `A|B`, you may split on `|` and use both values.
+    - Assume column renaming and reordering is already done
+    - Be named exactly `transform_table` since there are some other processes which expect this name
+
+    Special mapping rules:
+    - `("col1", "col2") -> ("new_col",)` means you should merge these two columns into one
+    - `("col",) -> ("new_col",)` means this column was renamed (already done)
+    - `("col",) -> ()` means this column was dropped — you don’t need to process it
+    - `() -> ("new_col",)` means a new column was created — use other values to populate it
+    - `("col1",) -> ("new_col1", "new_col2")` means this column is split into two new columns - use the original column values to populate them
+
+    Important:
+    - Return only a valid, executable Python function — no explanations, no comments
+    - Your response will be evaluated by `exec()`, so the code must not contain errors
+    - Your logic should generalize to similar tables — **do not hardcode, do not provide samples, and do not randomly generate cell values**.
+    
+    Generate the code for the following:
+
+    Input Table: [['user_engagement', 'tone', 'post_language', 'post_content', 'post_character_count', 'post_tags'], [380, 'Professional', 'Russian', 'Успех в современном бизнесе требует постоянного обучения и адаптации к новым условиям. Какие навыки вы развиваете, чтобы оставаться конкурентоспособным в этом стремительно меняющемся мире?', 3, ['Business', 'Success']], [545, 'Humorous', 'Hindi', "sapne dekhna achi baat hai,\nlekin job ka sapna dekh ke 'interested' likhna,\nyeh toh achi baat nahi hai na?", 3, ['Career Development', 'Job Search']], [2454, 'Inspirational', 'English', "3 things a vacation with my parents taught me.\n\n(This was the first time when just the 3 of us had gone for a holiday.\nIt turned out to be an awesome experience - much better than I had thought.)\n\nUpon my return, the next day as I was meditating, I reflected on the 4 days, asking myself if there was anything new I figured about myself or them.\n\nHere they are:\n\n1. No amount of material success, social validation, professional growth or bank balance can match up to the feeling of pampering your parents and making them feel proud of who you have become.\n\nTheir pride when people asked me for selfies, the comfort in which we travelled and stayed - everything made them act like kids in a toy store.\n\nNothing makes a child happier than to see their parents experience this joy.\n\n2. The number of such occasions with your parents is drastically reducing.\n\nWe walked for 5-8kms every day and by the end of the day, both of them were quite tired. They are both 70+, so it's a matter of a few years until such holidays come to a stop.\n\nI wish I had started long ago :(\n\n3. Your parents have lived their life and are set in their ways.\nWhat they need now is not change.\nWhat they need is acceptance.\n\nI do not agree with everything that my parents say or do, and for the longest time, I thought it is my duty to change their ways.\n\nI was wrong.\n\nAt this age, the best I can do is to accept them.\n\nThere isn't much time.\n\nCall them, visit them, spend time with them, travel with them.\n\nThey do not need your money.\nThey need your time.\n\nPS: Every week, I share such thoughts in my newsletter. You can receive that email for free by subscribing from the link in comments.", 23, ['Family']]]
+
+    Output Table: [
+    [
+        "tone",
+        "user_engagement",
+        "post_content",
+        "post_character_count",
+        "post_language",
+        "post_tags"
+    ],
+    [
+        "professional",
+        90,
+        "Just saw a LinkedIn Influencer with 'Organic Growth' written in the profile with 65K+ followers claiming that he can help you in growing your platform, copying the posts from other influencers.",
+        181,
+        "English",
+        "Influencer, Personal Growth"
+    ],
+    [
+        "inspirational",
+        347,
+        "Jobseekers, this one\u2019s for you.\n Every application, every interview, every follow-up\u2026 the pressure is immense.\n And I know what you're thinking: Am I not good enough? \n But let me tell you, this isn\u2019t about you or your skills. It\u2019s about a broken system where 60% of applicants never hear back. \n Your mental health is not worth sacrificing for a system that doesn\u2019t acknowledge your worth. \n Please remember, taking care of yourself is the real priority. \n Your dream job will come, but for now, breathe. \ud83c\udf3b",
+        396,
+        "English",
+        "Mental Health, Job Search"
+    ],
+    [
+        "humorous",
+        109,
+        "Looking for jobs on LinkedIn is like online dating: Full of promises, but in the end, you\u2019re just left ghosted.",
+        133,
+        "English",
+        "Online Dating, Job Search"
+    ]
+]
+
+    Input Schema: {'user_engagement': 'number', 'tone': 'string', 'post_language': 'string', 'post_content': 'string', 'post_character_count': 'boolean', 'post_tags': 'complex'}
+
+    Output Schema: {'tone': 'string', 'user_engagement': 'number', 'post_content': 'string', 'post_character_count': 'number', 'post_language': 'string', 'post_tags': 'string'}
+
+    Column Mapping: {('engagement',): ('user_engagement',), ('tone',): ('tone',), ('language',): ('post_language',), ('text',): ('post_content',), ('line_count',): ('post_character_count',), ('tags',): ('post_tags',)}
+
+    Respond only with Python code — nothing else.  
+
+[2025-05-02T09:52:18.647+0000] {python.py:240} INFO - Done. Returned value was: None
+[2025-05-02T09:52:18.654+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2025-05-02T09:52:18.655+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=PlanningEngine, task_id=InferTransformationLogic, run_id=manual__2025-05-02T09:51:18.177482+00:00, execution_date=20250502T095118, start_date=20250502T095210, end_date=20250502T095218
+[2025-05-02T09:52:18.685+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2025-05-02T09:52:18.704+0000] {taskinstance.py:3895} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-05-02T09:52:18.706+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

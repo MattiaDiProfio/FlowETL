@@ -1,0 +1,126 @@
+[2025-05-02T09:49:27.793+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2025-05-02T09:49:27.807+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: PlanningEngine.InferTransformationLogic manual__2025-05-02T09:48:42.370731+00:00 [queued]>
+[2025-05-02T09:49:27.816+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: PlanningEngine.InferTransformationLogic manual__2025-05-02T09:48:42.370731+00:00 [queued]>
+[2025-05-02T09:49:27.817+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 2
+[2025-05-02T09:49:27.831+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): InferTransformationLogic> on 2025-05-02 09:48:42.370731+00:00
+[2025-05-02T09:49:27.836+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:70: DeprecationWarning: This process (pid=151) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-05-02T09:49:27.837+0000] {standard_task_runner.py:72} INFO - Started process 152 to run task
+[2025-05-02T09:49:27.839+0000] {standard_task_runner.py:104} INFO - Running: ['***', 'tasks', 'run', 'PlanningEngine', 'InferTransformationLogic', 'manual__2025-05-02T09:48:42.370731+00:00', '--job-id', '3391', '--raw', '--subdir', 'DAGS_FOLDER/***DAG.py', '--cfg-path', '/tmp/tmpeevnqerw']
+[2025-05-02T09:49:27.840+0000] {standard_task_runner.py:105} INFO - Job 3391: Subtask InferTransformationLogic
+[2025-05-02T09:49:27.884+0000] {task_command.py:467} INFO - Running <TaskInstance: PlanningEngine.InferTransformationLogic manual__2025-05-02T09:48:42.370731+00:00 [running]> on host f31e97f3da01
+[2025-05-02T09:49:27.964+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='PlanningEngine' AIRFLOW_CTX_TASK_ID='InferTransformationLogic' AIRFLOW_CTX_EXECUTION_DATE='2025-05-02T09:48:42.370731+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-05-02T09:48:42.370731+00:00'
+[2025-05-02T09:49:27.965+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2025-05-02T09:49:28.012+0000] {airflowDAG.py:281} INFO - LLM Prompt : 
+
+    You are given two tables represented as 2D lists: an input table and an output table. Your task is to write a Python function that transforms the input table into the output table.
+
+    Your function must:
+    - Perform the necessary data transformations to match the output table
+    - Use the provided column mapping and schemas to guide your logic
+    - Leave any cell with the value '_ext_' unchanged
+    - Handle numeric operations carefully: convert strings to float before using them
+    - If a cell contains `A|B`, you may split on `|` and use both values.
+    - Assume column renaming and reordering is already done
+    - Be named exactly `transform_table` since there are some other processes which expect this name
+
+    Special mapping rules:
+    - `("col1", "col2") -> ("new_col",)` means you should merge these two columns into one
+    - `("col",) -> ("new_col",)` means this column was renamed (already done)
+    - `("col",) -> ()` means this column was dropped — you don’t need to process it
+    - `() -> ("new_col",)` means a new column was created — use other values to populate it
+    - `("col1",) -> ("new_col1", "new_col2")` means this column is split into two new columns - use the original column values to populate them
+
+    Important:
+    - Return only a valid, executable Python function — no explanations, no comments
+    - Your response will be evaluated by `exec()`, so the code must not contain errors
+    - Your logic should generalize to similar tables — **do not hardcode, do not provide samples, and do not randomly generate cell values**.
+    
+    Generate the code for the following:
+
+    Input Table: [['id', 'first_name', 'age', 'country_name', 'subscription', 'watch_time_hours', 'favourite_genre', 'last_access'], ['', 'Chris Davis', '', 'Brazil', '', '709.25', 'Comedy', '2025-01-02'], ['11335', '', '', 'Mexico', '', '746.19', 'Action', '2024-10-24'], ['17714', '', '4300.0', 'Japan', '', '', 'Sci-Fi', ''], ['21692', '', '6400.0', '', '', '637.14', '', '2024-08-24'], ['2437', '', '3600.0', 'UK', '', '', 'Sci-Fi', ''], ['21614', 'Emma Williams', '', 'Brazil', '', '907.19', '', ''], ['7768', '', '1600.0', 'Canada', '', '876.73', '', '2025-02-27'], ['15260', 'Sarah Martinez', '38', 'Mexico', '', '639.91', 'Documentary', '2024-05-09'], ['15298', 'Emma Jones', '36', 'UK', 'Standard', '', 'Action', ''], ['44100.0', '', '5400.0', '', 'Premium', '', '', '2024-05-30'], ['', 'Jane Johnson', '3100.0', '', '', '', '', '2024-05-11'], ['', '', '53', 'India', '', '', 'Documentary', ''], ['', 'James Hernandez', '', 'Mexico', '', '', 'Drama', '2024-03-11'], ['', 'Emma Williams', '33', 'Japan', 'Basic', '', '', '2024-03-27'], ['19841', 'Chris Smith', '', 'Germany', 'Standard', '', 'Action', ''], ['', 'Katie Smith', '5600.0', '', 'Basic', '', 'Horror', '2024-09-27'], ['1323200.0', 'John Garcia', '', 'Germany', '', '78.3', '', ''], ['776900.0', 'David Garcia', '', 'Germany', '', '149.85', '', ''], ['', 'David Davis', '', '', 'Basic', '846.23', '', ''], ['', 'Emma Smith', '', 'Japan', '', '189.91', 'Horror', '2025-02-02']]
+
+    Output Table: [
+    [
+        "id",
+        "first_name",
+        "last_name",
+        "age",
+        "country_name",
+        "subscription",
+        "watch_time_hours",
+        "favourite_genre",
+        "last_access"
+    ],
+    [
+        "1",
+        "James",
+        "Martinez",
+        "18",
+        "France",
+        "Premium",
+        "80",
+        "Drama",
+        "12-May-24"
+    ],
+    [
+        "2",
+        "John",
+        "Miller",
+        "23",
+        "USA",
+        "Premium",
+        "330",
+        "Sci-Fi",
+        "05-Feb-25"
+    ],
+    [
+        "3",
+        "Emma",
+        "Davis",
+        "60",
+        "UK",
+        "Basic",
+        "40",
+        "Comedy",
+        "24-Jan-25"
+    ],
+    [
+        "4",
+        "Emma",
+        "Miller",
+        "44",
+        "USA",
+        "Premium",
+        "270",
+        "Documentary",
+        "25-Mar-24"
+    ],
+    [
+        "5",
+        "Jane",
+        "Smith",
+        "68",
+        "USA",
+        "Standard",
+        "910",
+        "Drama",
+        "14-Jan-25"
+    ]
+]
+
+    Input Schema: {'id': 'number', 'first_name': 'string', 'age': 'number', 'country_name': 'string', 'subscription': 'string', 'watch_time_hours': 'number', 'favourite_genre': 'string', 'last_access': 'string'}
+
+    Output Schema: {'id': 'number', 'first_name': 'string', 'last_name': 'string', 'age': 'number', 'country_name': 'string', 'subscription': 'string', 'watch_time_hours': 'number', 'favourite_genre': 'string', 'last_access': 'string'}
+
+    Column Mapping: {('User_ID',): ('id',), ('Name',): ('first_name', 'last_name'), ('Age',): ('age',), ('Country',): ('country_name',), ('Subscription_Type',): ('subscription',), ('Watch_Time_Hours',): ('watch_time_hours',), ('Favorite_Genre',): ('favourite_genre',), ('Last_Login',): ('last_access',)}
+
+    Respond only with Python code — nothing else.  
+
+[2025-05-02T09:49:39.936+0000] {python.py:240} INFO - Done. Returned value was: None
+[2025-05-02T09:49:39.944+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2025-05-02T09:49:39.944+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=PlanningEngine, task_id=InferTransformationLogic, run_id=manual__2025-05-02T09:48:42.370731+00:00, execution_date=20250502T094842, start_date=20250502T094927, end_date=20250502T094939
+[2025-05-02T09:49:39.973+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2025-05-02T09:49:39.993+0000] {taskinstance.py:3895} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-05-02T09:49:39.996+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

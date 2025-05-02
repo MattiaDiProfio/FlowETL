@@ -1,0 +1,20 @@
+[2025-05-02T10:20:47.912+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2025-05-02T10:20:47.927+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: PlanningEngine.inferModifiedSchema manual__2025-05-02T10:18:21.303082+00:00 [queued]>
+[2025-05-02T10:20:47.935+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: PlanningEngine.inferModifiedSchema manual__2025-05-02T10:18:21.303082+00:00 [queued]>
+[2025-05-02T10:20:47.937+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 2
+[2025-05-02T10:20:47.951+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): inferModifiedSchema> on 2025-05-02 10:18:21.303082+00:00
+[2025-05-02T10:20:47.957+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:70: DeprecationWarning: This process (pid=256) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-05-02T10:20:47.959+0000] {standard_task_runner.py:72} INFO - Started process 257 to run task
+[2025-05-02T10:20:47.960+0000] {standard_task_runner.py:104} INFO - Running: ['***', 'tasks', 'run', 'PlanningEngine', 'inferModifiedSchema', 'manual__2025-05-02T10:18:21.303082+00:00', '--job-id', '3412', '--raw', '--subdir', 'DAGS_FOLDER/***DAG.py', '--cfg-path', '/tmp/tmpmo4swby6']
+[2025-05-02T10:20:47.961+0000] {standard_task_runner.py:105} INFO - Job 3412: Subtask inferModifiedSchema
+[2025-05-02T10:20:48.004+0000] {task_command.py:467} INFO - Running <TaskInstance: PlanningEngine.inferModifiedSchema manual__2025-05-02T10:18:21.303082+00:00 [running]> on host 8847949431eb
+[2025-05-02T10:20:48.083+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='PlanningEngine' AIRFLOW_CTX_TASK_ID='inferModifiedSchema' AIRFLOW_CTX_EXECUTION_DATE='2025-05-02T10:18:21.303082+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-05-02T10:18:21.303082+00:00'
+[2025-05-02T10:20:48.085+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2025-05-02T10:20:48.122+0000] {python.py:240} INFO - Done. Returned value was: None
+[2025-05-02T10:20:48.132+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2025-05-02T10:20:48.133+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=PlanningEngine, task_id=inferModifiedSchema, run_id=manual__2025-05-02T10:18:21.303082+00:00, execution_date=20250502T101821, start_date=20250502T102047, end_date=20250502T102048
+[2025-05-02T10:20:48.186+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2025-05-02T10:20:48.212+0000] {taskinstance.py:3895} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-05-02T10:20:48.218+0000] {local_task_job_runner.py:245} INFO - ::endgroup::
