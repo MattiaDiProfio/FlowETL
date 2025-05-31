@@ -1,0 +1,26 @@
++ -------------------------------------------ETL Report------------------------------------------- +
+| time-elapsed: 70.202235 s                                                                        |
++ ----------------------------------------Source File Info---------------------------------------- +
+| filename: chemistry_source.csv                                                                   |
+| objects-count: 65535                                                                             |
+| filesize: 7662.23 MBs                                                                            |
++ ----------------------------------------Target File Info---------------------------------------- +
+| filename: chemistry_target.csv                                                                   |
+| objects-count: 10                                                                                |
+| filesize: 1.21 MBs                                                                               |
++ --------------------------------------Planning Engine Stats------------------------------------- +
+| plans-computed: 36                                                                               |
+| plans-failed: 0                                                                                  |
+| max-data-quality-score: 0.983                                                                    |
+| best-plan: ['missingValues/impute', 'duplicates', 'outliers/impute']                             |
++ --------------------------------------Pre-ETL Source Stats-------------------------------------- +
+| missing-cells-percent: 10.717 %                                                                  |
+| numerical-outliers-percent: 2.483 %                                                              |
+| duplicate-rows-percent: 3.127 %                                                                  |
+| data-quality-score: 0.946                                                                        |
++ --------------------------------------Post-ETL Source Stats------------------------------------- +
+| missing-cells-percent: 0.0 %                                                                     |
+| numerical-outliers-percent: 0.0 %                                                                |
+| duplicate-rows-percent: 0.002 %                                                                  |
+| data-quality-score: 1.0                                                                          |
++ ------------------------------------------------------------------------------------------------ +

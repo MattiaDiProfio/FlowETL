@@ -1,0 +1,57 @@
+[2025-05-31T13:44:56.981+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2025-05-31T13:44:56.997+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: PlanningEngine.computeOptimalPlan manual__2025-05-31T13:42:52.456293+00:00 [queued]>
+[2025-05-31T13:44:57.005+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: PlanningEngine.computeOptimalPlan manual__2025-05-31T13:42:52.456293+00:00 [queued]>
+[2025-05-31T13:44:57.007+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 2
+[2025-05-31T13:44:57.019+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): computeOptimalPlan> on 2025-05-31 13:42:52.456293+00:00
+[2025-05-31T13:44:57.025+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:70: DeprecationWarning: This process (pid=126) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-05-31T13:44:57.027+0000] {standard_task_runner.py:72} INFO - Started process 127 to run task
+[2025-05-31T13:44:57.027+0000] {standard_task_runner.py:104} INFO - Running: ['***', 'tasks', 'run', 'PlanningEngine', 'computeOptimalPlan', 'manual__2025-05-31T13:42:52.456293+00:00', '--job-id', '3426', '--raw', '--subdir', 'DAGS_FOLDER/***DAG.py', '--cfg-path', '/tmp/tmpc269yn_c']
+[2025-05-31T13:44:57.028+0000] {standard_task_runner.py:105} INFO - Job 3426: Subtask computeOptimalPlan
+[2025-05-31T13:44:57.068+0000] {task_command.py:467} INFO - Running <TaskInstance: PlanningEngine.computeOptimalPlan manual__2025-05-31T13:42:52.456293+00:00 [running]> on host 87ce0d954e61
+[2025-05-31T13:44:57.137+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='PlanningEngine' AIRFLOW_CTX_TASK_ID='computeOptimalPlan' AIRFLOW_CTX_EXECUTION_DATE='2025-05-31T13:42:52.456293+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-05-31T13:42:52.456293+00:00'
+[2025-05-31T13:44:57.139+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2025-05-31T13:44:57.172+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('missingValues/impute', 'duplicates', 'outliers/impute') 
+[2025-05-31T13:44:57.174+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('missingValues/impute', 'duplicates', 'outliers/drop') 
+[2025-05-31T13:44:57.176+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('missingValues/drop.rows', 'duplicates', 'outliers/impute') 
+[2025-05-31T13:44:57.177+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('missingValues/drop.rows', 'duplicates', 'outliers/drop') 
+[2025-05-31T13:44:57.178+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('missingValues/drop.columns', 'duplicates', 'outliers/impute') 
+[2025-05-31T13:44:57.180+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('missingValues/drop.columns', 'duplicates', 'outliers/drop') 
+[2025-05-31T13:44:57.181+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('missingValues/impute', 'outliers/impute', 'duplicates') 
+[2025-05-31T13:44:57.183+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('missingValues/impute', 'outliers/drop', 'duplicates') 
+[2025-05-31T13:44:57.184+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('missingValues/drop.rows', 'outliers/impute', 'duplicates') 
+[2025-05-31T13:44:57.185+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('missingValues/drop.rows', 'outliers/drop', 'duplicates') 
+[2025-05-31T13:44:57.187+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('missingValues/drop.columns', 'outliers/impute', 'duplicates') 
+[2025-05-31T13:44:57.188+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('missingValues/drop.columns', 'outliers/drop', 'duplicates') 
+[2025-05-31T13:44:57.190+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('duplicates', 'missingValues/impute', 'outliers/impute') 
+[2025-05-31T13:44:57.191+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('duplicates', 'missingValues/impute', 'outliers/drop') 
+[2025-05-31T13:44:57.192+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('duplicates', 'missingValues/drop.rows', 'outliers/impute') 
+[2025-05-31T13:44:57.193+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('duplicates', 'missingValues/drop.rows', 'outliers/drop') 
+[2025-05-31T13:44:57.194+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('duplicates', 'missingValues/drop.columns', 'outliers/impute') 
+[2025-05-31T13:44:57.195+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('duplicates', 'missingValues/drop.columns', 'outliers/drop') 
+[2025-05-31T13:44:57.197+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('duplicates', 'outliers/impute', 'missingValues/impute') 
+[2025-05-31T13:44:57.198+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('duplicates', 'outliers/impute', 'missingValues/drop.rows') 
+[2025-05-31T13:44:57.200+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('duplicates', 'outliers/impute', 'missingValues/drop.columns') 
+[2025-05-31T13:44:57.201+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('duplicates', 'outliers/drop', 'missingValues/impute') 
+[2025-05-31T13:44:57.203+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('duplicates', 'outliers/drop', 'missingValues/drop.rows') 
+[2025-05-31T13:44:57.204+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('duplicates', 'outliers/drop', 'missingValues/drop.columns') 
+[2025-05-31T13:44:57.206+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('outliers/impute', 'missingValues/impute', 'duplicates') 
+[2025-05-31T13:44:57.207+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('outliers/impute', 'missingValues/drop.rows', 'duplicates') 
+[2025-05-31T13:44:57.208+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('outliers/impute', 'missingValues/drop.columns', 'duplicates') 
+[2025-05-31T13:44:57.209+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('outliers/drop', 'missingValues/impute', 'duplicates') 
+[2025-05-31T13:44:57.210+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('outliers/drop', 'missingValues/drop.rows', 'duplicates') 
+[2025-05-31T13:44:57.212+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('outliers/drop', 'missingValues/drop.columns', 'duplicates') 
+[2025-05-31T13:44:57.213+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('outliers/impute', 'duplicates', 'missingValues/impute') 
+[2025-05-31T13:44:57.214+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('outliers/impute', 'duplicates', 'missingValues/drop.rows') 
+[2025-05-31T13:44:57.215+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('outliers/impute', 'duplicates', 'missingValues/drop.columns') 
+[2025-05-31T13:44:57.216+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('outliers/drop', 'duplicates', 'missingValues/impute') 
+[2025-05-31T13:44:57.217+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('outliers/drop', 'duplicates', 'missingValues/drop.rows') 
+[2025-05-31T13:44:57.219+0000] {airflowDAG.py:346} INFO - DQ : 0.983 - ('outliers/drop', 'duplicates', 'missingValues/drop.columns') 
+[2025-05-31T13:44:57.232+0000] {airflowDAG.py:382} INFO - Best plan ('outliers/drop', 'duplicates', 'missingValues/drop.columns') achieved DQ score of 0.983
+[2025-05-31T13:44:57.270+0000] {python.py:240} INFO - Done. Returned value was: None
+[2025-05-31T13:44:57.278+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2025-05-31T13:44:57.279+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=PlanningEngine, task_id=computeOptimalPlan, run_id=manual__2025-05-31T13:42:52.456293+00:00, execution_date=20250531T134252, start_date=20250531T134456, end_date=20250531T134457
+[2025-05-31T13:44:57.323+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2025-05-31T13:44:57.343+0000] {taskinstance.py:3895} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-05-31T13:44:57.346+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

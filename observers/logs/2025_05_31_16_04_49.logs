@@ -1,0 +1,20 @@
+root INFO - 31/05/2025 04:04:49 PM : Connected to broker
+SourceObserver INFO - 31/05/2025 04:04:49 PM : Observer started on folder ..\input\source
+TargetObserver INFO - 31/05/2025 04:04:49 PM : Observer started on folder ..\input\target
+SourceObserver INFO - 31/05/2025 04:05:34 PM : detected file 'chemistry_source.csv'
+root INFO - 31/05/2025 04:05:34 PM : Extraction sample percentage set to 5.0%
+SourceObserver INFO - 31/05/2025 04:05:34 PM : Extracted 65535 objects from the uploaded file
+SourceObserver INFO - 31/05/2025 04:05:34 PM : Published the following metrics to Reporter : {'from': 'source_observer', 'contents': {'filename': 'chemistry_source.csv', 'objects_count': 65535, 'filesize_mbs': 7662.23}}
+kafka.conn INFO - 31/05/2025 04:05:34 PM : <BrokerConnection node_id=1001 host=localhost:9092 <connecting> [IPv6 ('::1', 9092, 0, 0)]>: connecting to localhost:9092 [('::1', 9092, 0, 0) IPv6]
+SourceObserver INFO - 31/05/2025 04:05:34 PM : Published the following information to broker - filename : 'chemistry_source.csv', associatedKey : 'None', contents (hidden) : 65535
+kafka.conn INFO - 31/05/2025 04:05:34 PM : <BrokerConnection node_id=1001 host=localhost:9092 <connecting> [IPv6 ('::1', 9092, 0, 0)]>: Connection complete.
+kafka.conn INFO - 31/05/2025 04:05:34 PM : <BrokerConnection node_id=bootstrap-0 host=localhost:9092 <connected> [IPv6 ('::1', 9092, 0, 0)]>: Closing connection. 
+TargetObserver INFO - 31/05/2025 04:05:41 PM : detected file 'chemistry_target.csv'
+root INFO - 31/05/2025 04:05:41 PM : Extraction sample percentage set to 5.0%
+TargetObserver INFO - 31/05/2025 04:05:41 PM : Extracted 10 objects from the uploaded file
+TargetObserver INFO - 31/05/2025 04:05:41 PM : Published the following metrics to Reporter : {'from': 'target_observer', 'contents': {'filename': 'chemistry_target.csv', 'objects_count': 10, 'filesize_mbs': 1.21}}
+TargetObserver INFO - 31/05/2025 04:05:41 PM : Published the following information to broker - filename : 'chemistry_target.csv', contents (hidden) : 10
+SourceObserver INFO - 31/05/2025 04:05:44 PM : Observer stopped
+TargetObserver INFO - 31/05/2025 04:05:44 PM : Observer stopped
+kafka.producer.kafka INFO - 31/05/2025 04:05:44 PM : Closing the Kafka producer with 4294967.0 secs timeout.
+kafka.conn INFO - 31/05/2025 04:05:44 PM : <BrokerConnection node_id=1001 host=localhost:9092 <connected> [IPv6 ('::1', 9092, 0, 0)]>: Closing connection. 

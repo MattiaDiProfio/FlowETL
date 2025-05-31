@@ -1,0 +1,31 @@
+[2025-05-31T15:04:15.514+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2025-05-31T15:04:15.530+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: PlanningEngine.consumeTarget manual__2025-05-31T15:04:13.949925+00:00 [queued]>
+[2025-05-31T15:04:15.538+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: PlanningEngine.consumeTarget manual__2025-05-31T15:04:13.949925+00:00 [queued]>
+[2025-05-31T15:04:15.538+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 2
+[2025-05-31T15:04:15.551+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): consumeTarget> on 2025-05-31 15:04:13.949925+00:00
+[2025-05-31T15:04:15.558+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:70: DeprecationWarning: This process (pid=82) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-05-31T15:04:15.560+0000] {standard_task_runner.py:72} INFO - Started process 85 to run task
+[2025-05-31T15:04:15.560+0000] {standard_task_runner.py:104} INFO - Running: ['***', 'tasks', 'run', 'PlanningEngine', 'consumeTarget', 'manual__2025-05-31T15:04:13.949925+00:00', '--job-id', '3444', '--raw', '--subdir', 'DAGS_FOLDER/***DAG.py', '--cfg-path', '/tmp/tmp2z16hccb']
+[2025-05-31T15:04:15.561+0000] {standard_task_runner.py:105} INFO - Job 3444: Subtask consumeTarget
+[2025-05-31T15:04:15.609+0000] {task_command.py:467} INFO - Running <TaskInstance: PlanningEngine.consumeTarget manual__2025-05-31T15:04:13.949925+00:00 [running]> on host 34f0c172c2da
+[2025-05-31T15:04:15.687+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='PlanningEngine' AIRFLOW_CTX_TASK_ID='consumeTarget' AIRFLOW_CTX_EXECUTION_DATE='2025-05-31T15:04:13.949925+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-05-31T15:04:13.949925+00:00'
+[2025-05-31T15:04:15.688+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2025-05-31T15:04:15.729+0000] {conn.py:362} INFO - <BrokerConnection node_id=bootstrap-0 host=kafka:9091 <connecting> [IPv4 ('172.18.0.5', 9091)]>: connecting to kafka:9091 [('172.18.0.5', 9091) IPv4]
+[2025-05-31T15:04:15.730+0000] {conn.py:957} INFO - Probing node bootstrap-0 broker version
+[2025-05-31T15:04:15.731+0000] {conn.py:393} INFO - <BrokerConnection node_id=bootstrap-0 host=kafka:9091 <connecting> [IPv4 ('172.18.0.5', 9091)]>: Connection complete.
+[2025-05-31T15:04:15.836+0000] {conn.py:1019} INFO - Broker version identified as 2.6.0
+[2025-05-31T15:04:15.837+0000] {conn.py:1020} INFO - Set configuration api_version=(2, 6, 0) to skip auto check_version requests on startup
+[2025-05-31T15:04:15.838+0000] {consumer.py:122} WARNING - group_id is None: disabling auto-commit.
+[2025-05-31T15:04:15.838+0000] {subscription_state.py:167} INFO - Updating subscribed topics to: ('targetSamples',)
+[2025-05-31T15:04:15.841+0000] {subscription_state.py:253} INFO - Updated partition assignment: [('targetSamples', 0)]
+[2025-05-31T15:04:15.842+0000] {conn.py:362} INFO - <BrokerConnection node_id=1001 host=kafka:9091 <connecting> [IPv4 ('172.18.0.5', 9091)]>: connecting to kafka:9091 [('172.18.0.5', 9091) IPv4]
+[2025-05-31T15:04:15.843+0000] {conn.py:393} INFO - <BrokerConnection node_id=1001 host=kafka:9091 <connecting> [IPv4 ('172.18.0.5', 9091)]>: Connection complete.
+[2025-05-31T15:04:15.844+0000] {conn.py:673} INFO - <BrokerConnection node_id=bootstrap-0 host=kafka:9091 <connected> [IPv4 ('172.18.0.5', 9091)]>: Closing connection. 
+[2025-05-31T15:04:46.393+0000] {conn.py:673} INFO - <BrokerConnection node_id=1001 host=kafka:9091 <connected> [IPv4 ('172.18.0.5', 9091)]>: Closing connection. 
+[2025-05-31T15:04:46.395+0000] {python.py:240} INFO - Done. Returned value was: None
+[2025-05-31T15:04:46.408+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2025-05-31T15:04:46.409+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=PlanningEngine, task_id=consumeTarget, run_id=manual__2025-05-31T15:04:13.949925+00:00, execution_date=20250531T150413, start_date=20250531T150415, end_date=20250531T150446
+[2025-05-31T15:04:46.437+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2025-05-31T15:04:46.446+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

@@ -1,0 +1,111 @@
+[2025-05-31T13:57:37.234+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2025-05-31T13:57:37.252+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: PlanningEngine.computeSchemaMap manual__2025-05-31T13:57:15.568897+00:00 [queued]>
+[2025-05-31T13:57:37.262+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: PlanningEngine.computeSchemaMap manual__2025-05-31T13:57:15.568897+00:00 [queued]>
+[2025-05-31T13:57:37.263+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 2
+[2025-05-31T13:57:37.279+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): computeSchemaMap> on 2025-05-31 13:57:15.568897+00:00
+[2025-05-31T13:57:37.286+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:70: DeprecationWarning: This process (pid=94) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-05-31T13:57:37.288+0000] {standard_task_runner.py:72} INFO - Started process 95 to run task
+[2025-05-31T13:57:37.288+0000] {standard_task_runner.py:104} INFO - Running: ['***', 'tasks', 'run', 'PlanningEngine', 'computeSchemaMap', 'manual__2025-05-31T13:57:15.568897+00:00', '--job-id', '3434', '--raw', '--subdir', 'DAGS_FOLDER/***DAG.py', '--cfg-path', '/tmp/tmpgs40f7bu']
+[2025-05-31T13:57:37.289+0000] {standard_task_runner.py:105} INFO - Job 3434: Subtask computeSchemaMap
+[2025-05-31T13:57:37.338+0000] {task_command.py:467} INFO - Running <TaskInstance: PlanningEngine.computeSchemaMap manual__2025-05-31T13:57:15.568897+00:00 [running]> on host 6ff7a72dd575
+[2025-05-31T13:57:37.421+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='PlanningEngine' AIRFLOW_CTX_TASK_ID='computeSchemaMap' AIRFLOW_CTX_EXECUTION_DATE='2025-05-31T13:57:15.568897+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-05-31T13:57:15.568897+00:00'
+[2025-05-31T13:57:37.423+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2025-05-31T13:57:37.453+0000] {airflowDAG.py:160} INFO - LLM Prompt : 
+
+    You are given a list of source column headers and target column headers. Your task is to infer a plausible mapping from source to target columns.
+
+    Rules:
+    - At most two source attributes can be merged into one target attribute: represent this as `("s1", "s2"): ("t1")`
+    - A source attribute may also be split into two target attributes: represent this as `("s1"): ("t1", "t2")`
+    - If a source column is dropped, use an empty tuple as the value: `("s1"): ()`
+    - If a target column is created, use an empty tuple as the key: `(): ("t1")`
+    - Every source and target column can appear at most once in each mapping.
+
+    Additional constraints:
+    - Do not include placeholder values such as `None`
+    - Ensure no duplicate keys in the output
+    - Return a valid Python dictionary using tuple keys and values
+    - Do not add any comments, explanations, or surrounding text
+
+    Input:
+    Source columns = ['CHEMISTRY_ID', 'CHEMISTRY_TYPE', 'ASSAY_CATEGORY', 'ASSAY_NAME', 'ACTIVITY', 'UNITS', 'ASSAY_QUAL_RESULT', 'CONCENTRATION', 'CONCENTRATION_UNITS', 'ASSAY_DATE', 'DEPARTMENT_ID', 'BIOMASS_ID', 'ORGANISM_ID', 'SITE_ID', 'REGION', 'LATITUDE', 'LONGITUDE', 'PRODUCTION_MEDIA', 'SOURCE_ID', 'SOURCE_TYPE', 'PERSON_ID', 'COUNTRY', 'PHYLUM', 'COMMON_NAME', 'FAMILY', 'GENUS', 'SPECIES']
+    Target columns = ['CHEMISTRY_ID', 'CHEMISTRY_TYPE', 'ASSAY_CATEGORY', 'ASSAY_NAME', 'ACTIVITY', 'UNITS', 'ASSAY_QUAL_RESULT', 'CONCENTRATION', 'CONCENTRATION_UNITS', 'ASSAY_DATE', 'DEPARTMENT_ID', 'BIOMASS_ID', 'ORGANISM_ID', 'SITE_ID', 'REGION', 'LATITUDE', 'LONGITUDE', 'PRODUCTION_MEDIA', 'SOURCE_ID', 'SOURCE_TYPE', 'PERSON_ID', 'COUNTRY', 'PHYLUM', 'COMMON_NAME', 'FAMILY', 'GENUS', 'SPECIES']
+
+    Return your answer inside a Python code block in the following format:
+
+    ```python
+    { ("source1",): ("target1",), ... }
+    ```
+     
+
+[2025-05-31T13:57:43.009+0000] {airflowDAG.py:180} INFO - LLM Response : 
+```python
+{
+    ("CHEMISTRY_ID",): ("CHEMISTRY_ID",),
+    ("CHEMISTRY_TYPE",): ("CHEMISTRY_TYPE",),
+    ("ASSAY_CATEGORY",): ("ASSAY_CATEGORY",),
+    ("ASSAY_NAME",): ("ASSAY_NAME",),
+    ("ACTIVITY",): ("ACTIVITY",),
+    ("UNITS",): ("UNITS",),
+    ("ASSAY_QUAL_RESULT",): ("ASSAY_QUAL_RESULT",),
+    ("CONCENTRATION",): ("CONCENTRATION",),
+    ("CONCENTRATION_UNITS",): ("CONCENTRATION_UNITS",),
+    ("ASSAY_DATE",): ("ASSAY_DATE",),
+    ("DEPARTMENT_ID",): ("DEPARTMENT_ID",),
+    ("BIOMASS_ID",): ("BIOMASS_ID",),
+    ("ORGANISM_ID",): ("ORGANISM_ID",),
+    ("SITE_ID",): ("SITE_ID",),
+    ("REGION",): ("REGION",),
+    ("LATITUDE",): ("LATITUDE",),
+    ("LONGITUDE",): ("LONGITUDE",),
+    ("PRODUCTION_MEDIA",): ("PRODUCTION_MEDIA",),
+    ("SOURCE_ID",): ("SOURCE_ID",),
+    ("SOURCE_TYPE",): ("SOURCE_TYPE",),
+    ("PERSON_ID",): ("PERSON_ID",),
+    ("COUNTRY",): ("COUNTRY",),
+    ("PHYLUM",): ("PHYLUM",),
+    ("COMMON_NAME",): ("COMMON_NAME",),
+    ("FAMILY",): ("FAMILY",),
+    ("GENUS",): ("GENUS",),
+    ("SPECIES",): ("SPECIES",)
+}
+``` 
+ schema map = ```python
+{
+    ("CHEMISTRY_ID",): ("CHEMISTRY_ID",),
+    ("CHEMISTRY_TYPE",): ("CHEMISTRY_TYPE",),
+    ("ASSAY_CATEGORY",): ("ASSAY_CATEGORY",),
+    ("ASSAY_NAME",): ("ASSAY_NAME",),
+    ("ACTIVITY",): ("ACTIVITY",),
+    ("UNITS",): ("UNITS",),
+    ("ASSAY_QUAL_RESULT",): ("ASSAY_QUAL_RESULT",),
+    ("CONCENTRATION",): ("CONCENTRATION",),
+    ("CONCENTRATION_UNITS",): ("CONCENTRATION_UNITS",),
+    ("ASSAY_DATE",): ("ASSAY_DATE",),
+    ("DEPARTMENT_ID",): ("DEPARTMENT_ID",),
+    ("BIOMASS_ID",): ("BIOMASS_ID",),
+    ("ORGANISM_ID",): ("ORGANISM_ID",),
+    ("SITE_ID",): ("SITE_ID",),
+    ("REGION",): ("REGION",),
+    ("LATITUDE",): ("LATITUDE",),
+    ("LONGITUDE",): ("LONGITUDE",),
+    ("PRODUCTION_MEDIA",): ("PRODUCTION_MEDIA",),
+    ("SOURCE_ID",): ("SOURCE_ID",),
+    ("SOURCE_TYPE",): ("SOURCE_TYPE",),
+    ("PERSON_ID",): ("PERSON_ID",),
+    ("COUNTRY",): ("COUNTRY",),
+    ("PHYLUM",): ("PHYLUM",),
+    ("COMMON_NAME",): ("COMMON_NAME",),
+    ("FAMILY",): ("FAMILY",),
+    ("GENUS",): ("GENUS",),
+    ("SPECIES",): ("SPECIES",)
+}
+```, type = <class 'str'>
+[2025-05-31T13:57:43.026+0000] {python.py:240} INFO - Done. Returned value was: None
+[2025-05-31T13:57:43.037+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2025-05-31T13:57:43.038+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=PlanningEngine, task_id=computeSchemaMap, run_id=manual__2025-05-31T13:57:15.568897+00:00, execution_date=20250531T135715, start_date=20250531T135737, end_date=20250531T135743
+[2025-05-31T13:57:43.080+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2025-05-31T13:57:43.103+0000] {taskinstance.py:3895} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-05-31T13:57:43.107+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

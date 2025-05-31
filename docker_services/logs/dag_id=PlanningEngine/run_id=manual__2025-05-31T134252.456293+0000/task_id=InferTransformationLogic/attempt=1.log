@@ -1,0 +1,379 @@
+[2025-05-31T13:44:48.177+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2025-05-31T13:44:48.193+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: PlanningEngine.InferTransformationLogic manual__2025-05-31T13:42:52.456293+00:00 [queued]>
+[2025-05-31T13:44:48.201+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: PlanningEngine.InferTransformationLogic manual__2025-05-31T13:42:52.456293+00:00 [queued]>
+[2025-05-31T13:44:48.203+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 2
+[2025-05-31T13:44:48.216+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): InferTransformationLogic> on 2025-05-31 13:42:52.456293+00:00
+[2025-05-31T13:44:48.222+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:70: DeprecationWarning: This process (pid=123) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-05-31T13:44:48.223+0000] {standard_task_runner.py:72} INFO - Started process 124 to run task
+[2025-05-31T13:44:48.224+0000] {standard_task_runner.py:104} INFO - Running: ['***', 'tasks', 'run', 'PlanningEngine', 'InferTransformationLogic', 'manual__2025-05-31T13:42:52.456293+00:00', '--job-id', '3425', '--raw', '--subdir', 'DAGS_FOLDER/***DAG.py', '--cfg-path', '/tmp/tmp60b28ivk']
+[2025-05-31T13:44:48.225+0000] {standard_task_runner.py:105} INFO - Job 3425: Subtask InferTransformationLogic
+[2025-05-31T13:44:48.269+0000] {task_command.py:467} INFO - Running <TaskInstance: PlanningEngine.InferTransformationLogic manual__2025-05-31T13:42:52.456293+00:00 [running]> on host 87ce0d954e61
+[2025-05-31T13:44:48.343+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='PlanningEngine' AIRFLOW_CTX_TASK_ID='InferTransformationLogic' AIRFLOW_CTX_EXECUTION_DATE='2025-05-31T13:42:52.456293+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-05-31T13:42:52.456293+00:00'
+[2025-05-31T13:44:48.344+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2025-05-31T13:44:48.393+0000] {airflowDAG.py:281} INFO - LLM Prompt : 
+
+    You are given two tables represented as 2D lists: an input table and an output table. Your task is to write a Python function that transforms the input table into the output table.
+
+    Your function must:
+    - Perform the necessary data transformations to match the output table
+    - Use the provided column mapping and schemas to guide your logic
+    - Leave any cell with the value '_ext_' unchanged
+    - Handle numeric operations carefully: convert strings to float before using them
+    - If a cell contains `A|B`, you may split on `|` and use both values.
+    - Assume column renaming and reordering is already done
+    - Be named exactly `transform_table` since there are some other processes which expect this name
+
+    Special mapping rules:
+    - `("col1", "col2") -> ("new_col",)` means you should merge these two columns into one
+    - `("col",) -> ("new_col",)` means this column was renamed (already done)
+    - `("col",) -> ()` means this column was dropped — you don’t need to process it
+    - `() -> ("new_col",)` means a new column was created — use other values to populate it
+    - `("col1",) -> ("new_col1", "new_col2")` means this column is split into two new columns - use the original column values to populate them
+
+    Important:
+    - Return only a valid, executable Python function — no explanations, no comments
+    - Your response will be evaluated by `exec()`, so the code must not contain errors
+    - Your logic should generalize to similar tables — **do not hardcode, do not provide samples, and do not randomly generate cell values**.
+    
+    Generate the code for the following:
+
+    Input Table: [['CHEMISTRY_ID', 'CHEMISTRY_TYPE', 'ASSAY_CATEGORY', 'ASSAY_NAME', 'ACTIVITY', 'UNITS', 'ASSAY_QUAL_RESULT', 'CONCENTRATION', 'CONCENTRATION_UNITS', 'ASSAY_DATE', 'DEPARTMENT_ID', 'BIOMASS_ID', 'ORGANISM_ID', 'SITE_ID', 'REGION', 'LATITUDE', 'LONGITUDE', 'PRODUCTION_MEDIA', 'SOURCE_ID', 'SOURCE_TYPE', 'PERSON_ID', 'COUNTRY', 'PHYLUM', 'COMMON_NAME', 'FAMILY', 'GENUS', 'SPECIES'], ['UCC_E033', '', 'ANTI-INFECTIVE', 'RES_P.AER_PAO1_MIN', '-14.523195', 'PCT_INHIBITION', 'I', '0.08', 'NONE', '05/05/2014', 'MEDINA', 'UCCB45.1', 'B98C34a', 'UCC_CE10004_S2', 'ATLANTIC_OCEAN', '54.357', 'Dec-72', 'HM19$', 'UCCS02', 'O', 'UCC', 'IRELAND', 'ACTINOBACTERIA', '', 'MICROBACTERIACEAE', 'AGREIA', ''], ['MDNBC-04375359W', 'E', 'ANTI-INFECTIVE', 'RES_P.AER_PAO1+IMI', '-1.74', 'PCT_INHIBITION', 'I', '1', 'WBE', '17/06/2013', 'MEDINA', 'CA-188562-a02-MO001', 'CA-188562', 'BIADIBEPM_4', 'ATLANTIC_OCEAN', '', '', 'GAPM9', 'M-00409', 'O', 'MEDINA', 'EQUATORIAL GUINEA', 'ACTINOBACTERIA', '', 'MICROMONOSPORACEAE', '', ''], ['685-003-879', 'E', 'ANTI-INFECTIVE', 'ABS_MB2884 (E.COLI)', '7.403188', 'PCT_INHIBITION', 'I', '0.2', 'MG/ML', '22/04/2014', 'MEDINA', '4930-A.0-P67', '4930-A', 'T1-2013-35457', 'CARIBBEAN_SEA', '10.88542', '-85.95386', 'VR358', 'LA-14187', 'S', 'INBIO', 'COSTA RICA', 'ACTINOBACTERIA', 'NEW', 'MICROMONOSPORACEAE', 'MICROMONOSPORA', 'SP'], ['MDNBC-04416871M', 'E', 'ANTI-INFECTIVE', 'RES_C.ALB_MY1055', '32.3', 'PCT_INHIBITION', 'I', '0.8', 'WBE', '25/11/2013', 'MEDINA', 'CA-186054-a02-MO001', 'CA-186054', 'SUNKSHIPBATA_30', 'ATLANTIC_OCEAN', '', '', 'GDNPM', 'M-00406', 'O', 'MEDINA', 'EQUATORIAL GUINEA', 'ACTINOBACTERIA', '', 'NOCARDIOPSACEAE', '', ''], ['UCC_E263', '', 'ANTI-INFECTIVE', 'RES_P.AER_PAO1+IMI', '8.335323', 'PCT_INHIBITION', 'I', '0.08', 'NONE', '05/05/2014', 'MEDINA', 'UCCB39.3', 'B98M102', 'UCC_CE10004_S2', 'ATLANTIC_OCEAN', '54.357', 'Dec-72', 'HMOM$', 'UCCS02', 'O', 'UCC', 'IRELAND', 'ACTINOBACTERIA', '', 'TSUKAMURELLACEAE', 'TSUKAMURELLA', ''], ['MDNBC-04360793E', 'E', 'TOXICITY', 'HEPG2_AQO', '97', 'PCT_SURVIVAL', 'I', '100', 'UG/ML', '26/03/2014', 'UOT', 'CA-186048-a02-MO003', 'CA-186048', 'SUNKSHIPBATA_30', 'ATLANTIC_OCEAN', '', '', 'GFRM$', 'M-00405', 'O', 'MEDINA', 'EQUATORIAL GUINEA', 'ACTINOBACTERIA', '', 'STREPTOMYCETACEAE', '', ''], ['685-005-1234', 'E', 'ANTI-INFECTIVE', 'RES_C.ALB_MY1055', '23.822271', 'PCT_INHIBITION', 'I', '0.16', 'MG/ML', '09/01/2014', 'MEDINA', '5070-B.0-P64', '5070-B', 'T2-2013-35476', 'CARIBBEAN_SEA', '10.84209', '-85.82152', 'VP64', 'LA-14681', 'S', 'INBIO', 'COSTA RICA', 'ASCOMYCOTA', 'NEW', 'MELANOMMATACEAE', 'TREMATOSPHAERIA', 'SP'], ['KB11-43-GYM-F10', 'E', 'ANTI-INFECTIVE', 'RES_P.AER_PAO1+IMI', '6.192724', 'PCT_INHIBITION', 'I', '0.08', 'UNKNOWN', '05/05/2014', 'MEDINA', 'KB11-ZBA-43-GYM', 'KB11-ZBA-43', 'KALK-BAY-SA', 'ATLANTIC_OCEAN', '-34.118784', '18.459209', 'TGMY$', 'KB11', 'O', 'UWC', 'SOUTH AFRICA', '', 'NEW', '', '', ''], ['685-004-1185', 'E', 'ANTI-INFECTIVE', 'RES_A.FUM_ATCC46645', '12.784377', 'PCT_INHIBITION', 'I', '0.16', 'MG/ML', '21/10/2014', 'MEDINA', '5082-A.0-P18.1', '5082-A', 'T2-2013-35477', 'CARIBBEAN_SEA', '10.86112', '-85.91222', 'VP181', 'LA-14693', 'N', 'INBIO', 'COSTA RICA', 'ASCOMYCOTA', 'NEW', 'LEPTOSPHAERIACEAE', 'CONIOTHYRIUM', 'SP'], ['UCC_E231', '', 'ANTI-INFECTIVE', 'ABS_MB5393 (MRSA)', '19.744324', 'PCT_INHIBITION', 'I', '0.1', 'NONE', '22/04/2014', 'MEDINA', 'UCCB4.3', 'B226SN105', 'UCC_CE10004_S1', 'ATLANTIC_OCEAN', '54.143', 'Dec-38', 'HMSGG', 'UCCS01', 'O', 'UCC', 'IRELAND', 'ACTINOBACTERIA', '', 'TSUKAMURELLACEAE', 'TSUKAMURELLA', 'PSEUDOSPUMAE'], ['UCC_E267', '', 'ANTI-INFECTIVE', 'ABS_MB2884 (E.COLI)', '-7.039116', 'PCT_INHIBITION', 'I', '0.1', 'NONE', '25/03/2014', 'MEDINA', 'UCCB38.3', 'B98M102', 'UCC_CE10004_S2', 'ATLANTIC_OCEAN', '54.357', 'Dec-72', 'HM400', 'UCCS02', 'O', 'UCC', 'IRELAND', 'ACTINOBACTERIA', '', 'TSUKAMURELLACEAE', 'TSUKAMURELLA', ''], ['UCC_E268', '', 'ANTI-INFECTIVE', 'RES_A.FUM_ATCC46645', '-3.2301164', 'PCT_INHIBITION', 'I', '1', 'WBE', '09/02/2013', 'MEDINA', 'UCCB37.3', 'B98M102', 'UCC_CE10004_S2', 'ATLANTIC_OCEAN', '54.357', 'Dec-72', 'HM19$', 'UCCS02', 'O', 'UCC', 'IRELAND', 'ACTINOBACTERIA', '', 'TSUKAMURELLACEAE', 'TSUKAMURELLA', ''], ['MDNBC-04369175F', 'E', 'ANTI-INFECTIVE', 'RES_P.AER_PAO1+IMI', '-4.62', 'PCT_INHIBITION', 'I', '1', 'WBE', '17/06/2013', 'MEDINA', 'CA-218202-a02-MO001', 'CA-218202', 'PLAYADELACOMETA_24', 'ATLANTIC_OCEAN', '27.751111', '-15.631944', 'GAPM9', 'M-00532', 'O', 'MEDINA', 'SPAIN', 'ACTINOBACTERIA', '', 'MICROMONOSPORACEAE', '', ''], ['685-001-134', 'E', 'ANTI-INFECTIVE', 'ABS_C.ALB_MY1055', '-0.56483597', 'PCT_INHIBITION', 'I', '1', 'WBE', '17/06/2013', 'MEDINA', '3130-D.0-P-65', '3130-D', '78-2008-29821', 'CARIBBEAN_SEA', '10.79647', '-83.58928', 'VF15S', 'LA-10157', 'S', 'INBIO', 'COSTA RICA', 'FIRMICUTES', 'LEGACY', 'PAENIBACILLACEAE', 'PAENIBACILLUS', 'SP'], ['MDNBC-04399903T', 'E', 'ANTI-INFECTIVE', 'ABS_C.ALB_MY1055', '-55.01', 'PCT_INHIBITION', 'I', '1', 'WBE', '11/09/2013', 'MEDINA', 'CA-233819-a02-MO001', 'CA-233819', 'PATAGPTODESEADO_21', 'ATLANTIC_OCEAN', '-47.741167', '-65.999111', 'GAPM9', 'M-00647', 'S', 'MEDINA', 'ARGENTINA', 'ACTINOBACTERIA', '', 'MICROMONOSPORACEAE', '', ''], ['685-002-674', 'E', 'ANTI-INFECTIVE', 'RES_C.ALB_MY1055', '109.44444', 'PCT_INHIBITION', 'A', '0.16', 'MG/ML', '25/11/2013', 'MEDINA', '3665-F.0-P-68', '3665-F', 'T0-2009-386', 'CARIBBEAN_SEA', '9.76869', '-82.81414', 'VPY12', 'LA-10975', 'S', 'INBIO', 'COSTA RICA', 'ACTINOBACTERIA', 'LEGACY', 'STREPTOMYCETACEA', 'STREPTOMYCES', 'SP'], ['MDNBC-04359239B', 'E', 'ANTI-INFECTIVE', 'ABS_MB2884 (E.COLI)', 'Jan-71', 'PCT_INHIBITION', 'I', '2', 'WBE', '23/05/2013', 'MEDINA', 'CA-233779-a02-MO003', 'CA-233779', 'PATAGPTODESEADO_19', 'ATLANTIC_OCEAN', '-47.755917', '-65.902111', 'GFRM$', 'M-00641', 'S', 'MEDINA', 'ARGENTINA', 'ACTINOBACTERIA', '', 'STREPTOMYCETACEAE', '', ''], ['KB08-48-ZBA-A02', 'E', 'ANTI-INFECTIVE', 'RES_P.AER_PAO1_MIN', '-6.8957334', 'PCT_INHIBITION', 'I', '0.08', 'UNKNOWN', '11/05/2013', 'MEDINA', 'KB08-ZBA-48-ZBA', 'KB08-ZBA-48', 'KALK-BAY-SA', 'ATLANTIC_OCEAN', '-34.118784', '18.459209', 'TZBA$', 'KB08', 'O', 'UWC', 'SOUTH AFRICA', 'FIRMICUTES', 'NEW', 'BACILLACEAE', 'BACILLUS', 'SP.'], ['UCC_E271', '', 'ANTI-INFECTIVE', 'ABS_MB5393 (MRSA)', '9.8761835', 'PCT_INHIBITION', 'I', '0', 'NONE', '09/12/2013', 'MEDINA', 'UCCB30.3', 'B226SN104', 'UCC_CE10004_S1', 'ATLANTIC_OCEAN', '54.143', 'Dec-38', 'HM400', 'UCCS01', 'O', 'UCC', 'IRELAND', 'ACTINOBACTERIA', '', 'STREPTOMYCETACEAE', 'STREPTOMYCES', ''], ['UCC_E182', '', 'ANTI-INFECTIVE', 'RES_A.FUM_ATCC46645', '33.930088', 'PCT_INHIBITION', 'I', '0.08', 'NONE', '10/02/2014', 'MEDINA', 'UCCB56.3', 'B98M46', 'UCC_CE10004_S2', 'ATLANTIC_OCEAN', '54.357', 'Dec-72', 'HMSGG', 'UCCS02', 'O', 'UCC', 'IRELAND', 'ACTINOBACTERIA', '', 'BREVIBACTERIACEAE', 'BREVIBACTERIUM', '']]
+
+    Output Table: [
+    [
+        "CHEMISTRY_ID",
+        "CHEMISTRY_TYPE",
+        "ASSAY_CATEGORY",
+        "ASSAY_NAME",
+        "ACTIVITY",
+        "UNITS",
+        "ASSAY_QUAL_RESULT",
+        "CONCENTRATION",
+        "CONCENTRATION_UNITS",
+        "ASSAY_DATE",
+        "DEPARTMENT_ID",
+        "BIOMASS_ID",
+        "ORGANISM_ID",
+        "SITE_ID",
+        "REGION",
+        "LATITUDE",
+        "LONGITUDE",
+        "PRODUCTION_MEDIA",
+        "SOURCE_ID",
+        "SOURCE_TYPE",
+        "PERSON_ID",
+        "COUNTRY",
+        "PHYLUM",
+        "COMMON_NAME",
+        "FAMILY",
+        "GENUS",
+        "SPECIES"
+    ],
+    [
+        " BTN 1_M_15_1",
+        "E",
+        "ANTI-INFLAMMATORY",
+        "TNF_THPAIF",
+        "3",
+        "PCT_INHIBITION",
+        "I",
+        "100",
+        "UG/ML",
+        "08/10/2014",
+        "UOT",
+        "BTN 1_M_15",
+        "Pseudomonas BTN 1",
+        "M_BTN",
+        "ANTARCTIC_SEA",
+        "",
+        "",
+        "KMB1$",
+        "S_BTN",
+        "N",
+        "IBP-CNR",
+        "ANTARCTIC (SOUTH POLAR)",
+        "PROTEOBACTERIA",
+        "LEGACY",
+        "PSEUDOMONADACEAE",
+        "PSEUDOMONAS",
+        "SP."
+    ],
+    [
+        " BTN 1_T_15_1",
+        "E",
+        "ANTI-INFLAMMATORY",
+        "TNF_THPAIF",
+        "0",
+        "PCT_INHIBITION",
+        "I",
+        "100",
+        "UG/ML",
+        "08/10/2014",
+        "UOT",
+        "BTN 1_T_15",
+        "Pseudomonas BTN 1",
+        "M_BTN",
+        "ANTARCTIC_SEA",
+        "",
+        "",
+        "KTYP$",
+        "S_BTN",
+        "N",
+        "IBP-CNR",
+        "ANTARCTIC (SOUTH POLAR)",
+        "PROTEOBACTERIA",
+        "LEGACY",
+        "PSEUDOMONADACEAE",
+        "PSEUDOMONAS",
+        "SP."
+    ],
+    [
+        "685-001-1",
+        "E",
+        "ANTI-INFECTIVE",
+        "ABS_C.ALB_MY1055",
+        "2.2312152",
+        "PCT_INHIBITION",
+        "I",
+        "1",
+        "WBE",
+        "24/05/2013",
+        "MEDINA",
+        "3131-E.0-P-66",
+        "3131-E",
+        "78-2008-29821",
+        "CARIBBEAN_SEA",
+        "10.79647",
+        "-83.58928",
+        "VAPM9",
+        "LA-10158",
+        "S",
+        "INBIO",
+        "COSTA RICA",
+        "ACTINOBACTERIA",
+        "LEGACY",
+        "STREPTOMYCETACEA",
+        "STREPTOMYCES",
+        "SP"
+    ],
+    [
+        "685-001-10",
+        "E",
+        "ANTI-INFECTIVE",
+        "RES_P.AER_PAO1+IMI",
+        "5.1587276",
+        "PCT_INHIBITION",
+        "I",
+        "1",
+        "WBE",
+        "28/05/2013",
+        "MEDINA",
+        "3133-D.0-P-65",
+        "3133-D",
+        "78-2008-29822",
+        "CARIBBEAN_SEA",
+        "10.79906",
+        "-83.58828",
+        "VF15S",
+        "LA-10160",
+        "S",
+        "INBIO",
+        "COSTA RICA",
+        "ACTINOBACTERIA",
+        "LEGACY",
+        "STREPTOMYCETACEA",
+        "STREPTOMYCES",
+        "SP"
+    ],
+    [
+        "CHEMFE1 /1",
+        "E",
+        "ANTI-INFECTIVE",
+        "ABS_C.ALB_MY1055",
+        "12.257856",
+        "PCT_INHIBITION",
+        "I",
+        "1",
+        "WBE",
+        "24/05/2013",
+        "MEDINA",
+        "FE1 /1",
+        "FE1",
+        "SZN3",
+        "ATLANTIC_OCEAN",
+        "",
+        "",
+        "JMF2$",
+        "JSZNwatercolumn3",
+        "N",
+        "SZN",
+        "FRANCE",
+        "OCHROPHYTA",
+        "LEGACY",
+        "PHAEODACTYLACEAE",
+        "PHAEODACTYLUM",
+        "TRICORNUTUM"
+    ],
+    [
+        "CHEMFE1/2",
+        "E",
+        "ANTI-INFECTIVE",
+        "ABS_MB5393 (MRSA)",
+        "31.556194",
+        "PCT_INHIBITION",
+        "I",
+        "0.1",
+        "NONE",
+        "08/06/2014",
+        "MEDINA",
+        "FE1 /2",
+        "FE1",
+        "SZN3",
+        "ATLANTIC_OCEAN",
+        "",
+        "",
+        "JMF2$",
+        "JSZNwatercolumn3",
+        "N",
+        "SZN",
+        "FRANCE",
+        "OCHROPHYTA",
+        "LEGACY",
+        "PHAEODACTYLACEAE",
+        "PHAEODACTYLUM",
+        "TRICORNUTUM"
+    ],
+    [
+        "KB01-13-ACM-B02",
+        "E",
+        "ANTI-INFECTIVE",
+        "ABS_MB5393 (MRSA)",
+        "202.49632",
+        "PCT_INHIBITION",
+        "A",
+        "0.1",
+        "UNKNOWN",
+        "22/04/2014",
+        "MEDINA",
+        "KB01-GYM-13-ACM",
+        "KB01-GYM-13",
+        "KALK-BAY-SA",
+        "ATLANTIC_OCEAN",
+        "-34.118784",
+        "18.459209",
+        "TACM$",
+        "KB01",
+        "O",
+        "UWC",
+        "SOUTH AFRICA",
+        "",
+        "NEW",
+        "",
+        "",
+        ""
+    ],
+    [
+        "KB01-13-GYM-B02",
+        "E",
+        "ANTI-INFECTIVE",
+        "RES_P.AER_PAO1_MIN",
+        "-0.8563489",
+        "PCT_INHIBITION",
+        "I",
+        "0.08",
+        "UNKNOWN",
+        "05/05/2014",
+        "MEDINA",
+        "KB01-GYM-13-GYM",
+        "KB01-GYM-13",
+        "KALK-BAY-SA",
+        "ATLANTIC_OCEAN",
+        "-34.118784",
+        "18.459209",
+        "TGMY$",
+        "KB01",
+        "O",
+        "UWC",
+        "SOUTH AFRICA",
+        "",
+        "NEW",
+        "",
+        "",
+        ""
+    ],
+    [
+        "MDNBC-04328363R",
+        "F",
+        "TOXICITY",
+        "HEPG2_AQO",
+        "101",
+        "PCT_ACTIVITY",
+        "I",
+        "",
+        "UG/ML",
+        "28/06/2013",
+        "UOT",
+        "CM-284115-MO001",
+        "CM-284115",
+        "MEDIACONTROL_32",
+        "MEDITERRANEAN_SEA",
+        "",
+        "",
+        "GAPM9",
+        "M-MEDIA",
+        "S",
+        "MEDINA",
+        "SPAIN",
+        "",
+        "",
+        "",
+        "",
+        ""
+    ],
+    [
+        "MDNBC-04328363R",
+        "E",
+        "ANTI-INFECTIVE",
+        "RES_A.FUM_ATCC46645",
+        "-19.38",
+        "PCT_INHIBITION",
+        "I",
+        "1",
+        "WBE",
+        "07/05/2013",
+        "MEDINA",
+        "CM-284115-MO001",
+        "CM-284115",
+        "MEDIACONTROL_32",
+        "MEDITERRANEAN_SEA",
+        "",
+        "",
+        "GAPM9",
+        "M-MEDIA",
+        "S",
+        "MEDINA",
+        "SPAIN",
+        "",
+        "",
+        "",
+        "",
+        ""
+    ]
+]
+
+    Input Schema: {'CHEMISTRY_ID': 'string', 'CHEMISTRY_TYPE': 'string', 'ASSAY_CATEGORY': 'boolean', 'ASSAY_NAME': 'string', 'ACTIVITY': 'ambiguous', 'UNITS': 'boolean', 'ASSAY_QUAL_RESULT': 'boolean', 'CONCENTRATION': 'number', 'CONCENTRATION_UNITS': 'string', 'ASSAY_DATE': 'string', 'DEPARTMENT_ID': 'boolean', 'BIOMASS_ID': 'string', 'ORGANISM_ID': 'string', 'SITE_ID': 'string', 'REGION': 'boolean', 'LATITUDE': 'number', 'LONGITUDE': 'ambiguous', 'PRODUCTION_MEDIA': 'string', 'SOURCE_ID': 'string', 'SOURCE_TYPE': 'string', 'PERSON_ID': 'string', 'COUNTRY': 'string', 'PHYLUM': 'string', 'COMMON_NAME': 'boolean', 'FAMILY': 'string', 'GENUS': 'string', 'SPECIES': 'string'}
+
+    Output Schema: {'CHEMISTRY_ID': 'string', 'CHEMISTRY_TYPE': 'boolean', 'ASSAY_CATEGORY': 'string', 'ASSAY_NAME': 'string', 'ACTIVITY': 'number', 'UNITS': 'boolean', 'ASSAY_QUAL_RESULT': 'boolean', 'CONCENTRATION': 'number', 'CONCENTRATION_UNITS': 'string', 'ASSAY_DATE': 'string', 'DEPARTMENT_ID': 'boolean', 'BIOMASS_ID': 'string', 'ORGANISM_ID': 'string', 'SITE_ID': 'string', 'REGION': 'string', 'LATITUDE': 'number', 'LONGITUDE': 'number', 'PRODUCTION_MEDIA': 'string', 'SOURCE_ID': 'string', 'SOURCE_TYPE': 'string', 'PERSON_ID': 'string', 'COUNTRY': 'string', 'PHYLUM': 'string', 'COMMON_NAME': 'boolean', 'FAMILY': 'string', 'GENUS': 'string', 'SPECIES': 'string'}
+
+    Column Mapping: {('CHEMISTRY_ID',): ('CHEMISTRY_ID',), ('CHEMISTRY_TYPE',): ('CHEMISTRY_TYPE',), ('ASSAY_CATEGORY',): ('ASSAY_CATEGORY',), ('ASSAY_NAME',): ('ASSAY_NAME',), ('ACTIVITY',): ('ACTIVITY',), ('UNITS',): ('UNITS',), ('ASSAY_QUAL_RESULT',): ('ASSAY_QUAL_RESULT',), ('CONCENTRATION',): ('CONCENTRATION',), ('CONCENTRATION_UNITS',): ('CONCENTRATION_UNITS',), ('ASSAY_DATE',): ('ASSAY_DATE',), ('DEPARTMENT_ID',): ('DEPARTMENT_ID',), ('BIOMASS_ID',): ('BIOMASS_ID',), ('ORGANISM_ID',): ('ORGANISM_ID',), ('SITE_ID',): ('SITE_ID',), ('REGION',): ('REGION',), ('LATITUDE',): ('LATITUDE',), ('LONGITUDE',): ('LONGITUDE',), ('PRODUCTION_MEDIA',): ('PRODUCTION_MEDIA',), ('SOURCE_ID',): ('SOURCE_ID',), ('SOURCE_TYPE',): ('SOURCE_TYPE',), ('PERSON_ID',): ('PERSON_ID',), ('COUNTRY',): ('COUNTRY',), ('PHYLUM',): ('PHYLUM',), ('COMMON_NAME',): ('COMMON_NAME',), ('FAMILY',): ('FAMILY',), ('GENUS',): ('GENUS',), ('SPECIES',): ('SPECIES',)}
+
+    Respond only with Python code — nothing else.  
+
+[2025-05-31T13:44:55.817+0000] {python.py:240} INFO - Done. Returned value was: None
+[2025-05-31T13:44:55.826+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2025-05-31T13:44:55.827+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=PlanningEngine, task_id=InferTransformationLogic, run_id=manual__2025-05-31T13:42:52.456293+00:00, execution_date=20250531T134252, start_date=20250531T134448, end_date=20250531T134455
+[2025-05-31T13:44:55.874+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2025-05-31T13:44:55.893+0000] {taskinstance.py:3895} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-05-31T13:44:55.897+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

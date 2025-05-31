@@ -1,0 +1,2 @@
+Region – Country  – (Latitude – Longitude) – Site ID – Person ID – Source type – Source ID – (Phylum – Family – Genus – Species) – Organism ID - Production Media – Biomass ID - Chemistry type – Chemistry ID – Assay Category – Assay name – (Concentration – Concentration Units) – (Activity – Units) – Assay Qual result -  Assay date – Department ID
+

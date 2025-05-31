@@ -1,0 +1,32 @@
+[2025-05-31T13:44:59.277+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2025-05-31T13:44:59.294+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: PlanningEngine.publishMetrics manual__2025-05-31T13:42:52.456293+00:00 [queued]>
+[2025-05-31T13:44:59.302+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: PlanningEngine.publishMetrics manual__2025-05-31T13:42:52.456293+00:00 [queued]>
+[2025-05-31T13:44:59.304+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 2
+[2025-05-31T13:44:59.318+0000] {taskinstance.py:2889} INFO - Executing <Task(PythonOperator): publishMetrics> on 2025-05-31 13:42:52.456293+00:00
+[2025-05-31T13:44:59.326+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:70: DeprecationWarning: This process (pid=133) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-05-31T13:44:59.327+0000] {standard_task_runner.py:72} INFO - Started process 134 to run task
+[2025-05-31T13:44:59.328+0000] {standard_task_runner.py:104} INFO - Running: ['***', 'tasks', 'run', 'PlanningEngine', 'publishMetrics', 'manual__2025-05-31T13:42:52.456293+00:00', '--job-id', '3428', '--raw', '--subdir', 'DAGS_FOLDER/***DAG.py', '--cfg-path', '/tmp/tmp28t6o4ij']
+[2025-05-31T13:44:59.330+0000] {standard_task_runner.py:105} INFO - Job 3428: Subtask publishMetrics
+[2025-05-31T13:44:59.375+0000] {task_command.py:467} INFO - Running <TaskInstance: PlanningEngine.publishMetrics manual__2025-05-31T13:42:52.456293+00:00 [running]> on host 87ce0d954e61
+[2025-05-31T13:44:59.460+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='PlanningEngine' AIRFLOW_CTX_TASK_ID='publishMetrics' AIRFLOW_CTX_EXECUTION_DATE='2025-05-31T13:42:52.456293+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-05-31T13:42:52.456293+00:00'
+[2025-05-31T13:44:59.461+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2025-05-31T13:44:59.483+0000] {conn.py:362} INFO - <BrokerConnection node_id=bootstrap-0 host=kafka:9091 <connecting> [IPv4 ('172.18.0.5', 9091)]>: connecting to kafka:9091 [('172.18.0.5', 9091) IPv4]
+[2025-05-31T13:44:59.484+0000] {conn.py:957} INFO - Probing node bootstrap-0 broker version
+[2025-05-31T13:44:59.485+0000] {conn.py:393} INFO - <BrokerConnection node_id=bootstrap-0 host=kafka:9091 <connecting> [IPv4 ('172.18.0.5', 9091)]>: Connection complete.
+[2025-05-31T13:44:59.590+0000] {conn.py:1019} INFO - Broker version identified as 2.6.0
+[2025-05-31T13:44:59.591+0000] {conn.py:1020} INFO - Set configuration api_version=(2, 6, 0) to skip auto check_version requests on startup
+[2025-05-31T13:44:59.593+0000] {airflowDAG.py:441} INFO - Connected to broker
+[2025-05-31T13:44:59.595+0000] {airflowDAG.py:445} INFO - Metrics {'from': 'planning_engine', 'contents': {'plans_computed_count': 36, 'plans_failed_count': 0, 'max_dq_achieved': 0.983, 'best_plan': ['missingValues/impute', 'duplicates', 'outliers/impute']}} published to broker
+[2025-05-31T13:44:59.596+0000] {kafka.py:486} INFO - Closing the Kafka producer with 9223372036.0 secs timeout.
+[2025-05-31T13:44:59.597+0000] {conn.py:362} INFO - <BrokerConnection node_id=1001 host=kafka:9091 <connecting> [IPv4 ('172.18.0.5', 9091)]>: connecting to kafka:9091 [('172.18.0.5', 9091) IPv4]
+[2025-05-31T13:44:59.598+0000] {conn.py:393} INFO - <BrokerConnection node_id=1001 host=kafka:9091 <connecting> [IPv4 ('172.18.0.5', 9091)]>: Connection complete.
+[2025-05-31T13:44:59.599+0000] {conn.py:673} INFO - <BrokerConnection node_id=bootstrap-0 host=kafka:9091 <connected> [IPv4 ('172.18.0.5', 9091)]>: Closing connection. 
+[2025-05-31T13:44:59.602+0000] {conn.py:673} INFO - <BrokerConnection node_id=1001 host=kafka:9091 <connected> [IPv4 ('172.18.0.5', 9091)]>: Closing connection. 
+[2025-05-31T13:44:59.604+0000] {python.py:240} INFO - Done. Returned value was: None
+[2025-05-31T13:44:59.614+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2025-05-31T13:44:59.615+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=PlanningEngine, task_id=publishMetrics, run_id=manual__2025-05-31T13:42:52.456293+00:00, execution_date=20250531T134252, start_date=20250531T134459, end_date=20250531T134459
+[2025-05-31T13:44:59.665+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2025-05-31T13:44:59.679+0000] {taskinstance.py:3895} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-05-31T13:44:59.683+0000] {local_task_job_runner.py:245} INFO - ::endgroup::
